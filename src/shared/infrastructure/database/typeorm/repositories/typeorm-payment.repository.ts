@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaymentRepo } from '../../../../../payment/application/repositories/payment.repository';
 import {
+  ICalculationPolicy,
   IPaymentParams,
   Payment,
   PaymentStatusEnum,
@@ -13,6 +14,12 @@ import { UserId } from '../../../../domain/value-objects/user-id.vo';
 import { TypeOrmUser } from '../entities/typeorm-user';
 import { Money } from '../../../../domain/value-objects/money.vo';
 import { PaymentBuilder } from '../../../../../payment/domain/entities/payment.builder';
+import { DefaultCalculationPolicy } from '../../../../../payment/domain/policies/calculation.policy';
+import { ISpecification } from '../../../../interfaces/specification.interface';
+import {
+  AmountSpecification,
+  StatusSpecification,
+} from '../../../../../payment/domain/specifications/payment.specifications';
 
 @Injectable()
 export class TypeOrmPaymentRepository implements IPaymentRepo {
@@ -29,6 +36,7 @@ export class TypeOrmPaymentRepository implements IPaymentRepo {
   async findById(id: PaymentId): Promise<Payment | null> {
     const dbPayment = await this.paymRepo.findOne({
       where: { id: id.value },
+      relations: ['user'],
     });
 
     if (!dbPayment) {
@@ -72,6 +80,18 @@ export class TypeOrmPaymentRepository implements IPaymentRepo {
       status: typeOrmPayment.status,
     };
 
-    return new PaymentBuilder().withParams(params).build();
+    return new PaymentBuilder()
+      .withParams(params)
+      .withPolicies(this.getRetreivalCalculationPolicy())
+      .withSpecs(this.getRetreivalSpecs())
+      .build();
+  }
+
+  private getRetreivalCalculationPolicy(): ICalculationPolicy {
+    return new DefaultCalculationPolicy();
+  }
+
+  private getRetreivalSpecs(): ISpecification<Payment>[] {
+    return [new AmountSpecification(), new StatusSpecification()];
   }
 }

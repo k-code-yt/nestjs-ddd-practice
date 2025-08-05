@@ -1,9 +1,6 @@
-import { ISpecification } from '../../shared/interfaces/specification.interface';
-import { User } from '../domain/entities/user';
-import {
-  PermissionType,
-  ResourceType,
-} from '../domain/value-objects/permission.vo';
+import { ISpecification } from '../../../shared/interfaces/specification.interface';
+import { User } from '../entities/user';
+import { PermissionType, ResourceType } from '../value-objects/permission.vo';
 
 export class WritePermissionSpecification implements ISpecification<User> {
   private readonly permittedTypes: PermissionType[] = [

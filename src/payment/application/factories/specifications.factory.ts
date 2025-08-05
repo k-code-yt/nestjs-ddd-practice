@@ -4,11 +4,11 @@ import { Payment } from '../../domain/entities/payment';
 import {
   NegativePaymentSpecification,
   PaymentAuthorizationSpecification,
-} from '../../domain/specifications/authorization-specifications';
+} from '../../domain/specifications/authorization.specifications';
 import {
   AmountSpecification,
   StatusSpecification,
-} from '../../domain/specifications/payment-specifications';
+} from '../../domain/specifications/payment.specifications';
 import { UserPermissionDto } from '../dtos/user-permission.dto';
 
 export interface ISpecFactoryParams {

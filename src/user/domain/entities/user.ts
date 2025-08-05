@@ -1,6 +1,16 @@
 import { UserId } from '../../../shared/domain/value-objects/user-id.vo';
 import { ISpecification } from '../../../shared/interfaces/specification.interface';
+import { IHashPasswordPolicy } from '../policies/hash-password.policy';
+import { IPermissionPolicy } from '../policies/permissions.policy';
+import { HashedPassword } from '../value-objects/hashed-password.vo';
+import { Password } from '../value-objects/password.vo';
 import { Permission } from '../value-objects/permission.vo';
+
+export enum UserResourceEnum {
+  userCreate = 'userCreate',
+  userProfileUpdate = 'userProfileUpdate',
+  userPermissions = 'userPermissions',
+}
 
 export enum UserTypeEnum {
   driver = 'driver',
@@ -8,17 +18,29 @@ export enum UserTypeEnum {
   owner = 'owner',
 }
 
+export interface IUserBuilder {
+  build(): User;
+}
 export interface IUserParams {
   id: UserId;
   type: UserTypeEnum;
-  fullName: string;
+  fullName?: string;
   email: string;
-  permissions: Permission[];
+  password: Password;
+  permissions?: Permission[];
+  lockedUntil?: Date;
+  hashedPassword?: HashedPassword;
+}
+
+export interface IUserPolicies {
+  password?: IHashPasswordPolicy;
+  permission?: IPermissionPolicy;
 }
 
 export class User {
   constructor(
     private readonly params: IUserParams,
+    private readonly policies: IUserPolicies,
     private readonly specs: ISpecification<User>[],
   ) {}
 
@@ -38,25 +60,53 @@ export class User {
     }
   }
 
-  public post(): this {
+  public async applyPasswordPolicy() {
+    if (this.policies.password) {
+      this.params.hashedPassword = await this.policies.password?.createHashed();
+    }
+  }
+
+  public async applyPermissionsPolicy() {
+    if (this.policies.permission) {
+      this.params.permissions = this.policies.permission.create(
+        this.params.type,
+      );
+    }
+  }
+
+  public create(): this {
     this.applyIdIfMissing();
+    this.applyPasswordPolicy();
+    this.applyPermissionsPolicy();
     this.ensureSpecs();
     return this;
   }
 
-  get id(): UserId {
+  get id(): UserId | undefined {
     return this.params.id;
   }
 
-  get fullName() {
+  get hashedPassword(): HashedPassword | undefined {
+    return this.params.hashedPassword;
+  }
+
+  get fullName(): string | undefined {
     return this.params.fullName;
   }
 
-  get permissions(): Permission[] {
+  get permissions(): Permission[] | undefined {
     return this.params.permissions;
   }
 
   get type(): UserTypeEnum {
     return this.params.type;
+  }
+
+  get email(): string {
+    return this.params.email;
+  }
+
+  get lockedUntil(): Date | null {
+    return this.params.lockedUntil || null;
   }
 }

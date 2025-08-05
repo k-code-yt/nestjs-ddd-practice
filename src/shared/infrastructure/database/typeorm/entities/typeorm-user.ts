@@ -30,8 +30,11 @@ export class TypeOrmUser {
   @Column()
   lastName: string;
 
-  @Column({ select: false })
+  @Column({ select: false, unique: false, nullable: false })
   password: string;
+
+  @UpdateDateColumn()
+  passwordUpdatedAt: Date;
 
   @Column({ default: true })
   isActive: boolean;

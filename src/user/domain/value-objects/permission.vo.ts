@@ -76,6 +76,12 @@ export class Permission {
     };
   }
 
+  static getAdminPermissions(): Permission[] {
+    return Object.entries(ResourceType).map(
+      (rt) => new Permission(PermissionType.ADMIN, rt[1]),
+    );
+  }
+
   private validatePermission(permission: PermissionType): void {
     if (!Object.values(PermissionType).includes(permission)) {
       throw new Error(`Invalid permission type: ${permission}`);
