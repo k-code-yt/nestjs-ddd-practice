@@ -13,3 +13,4 @@ export interface ISaveUserRepo extends IFindedUserRepo {
 export interface IUpdateUserRepo extends IFindedUserRepo {
   update(user: User): Promise<void>;
 }
+

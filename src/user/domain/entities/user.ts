@@ -74,10 +74,10 @@ export class User {
     }
   }
 
-  public create(): this {
+  public async create(): Promise<this> {
     this.applyIdIfMissing();
-    this.applyPasswordPolicy();
-    this.applyPermissionsPolicy();
+    await this.applyPasswordPolicy();
+    await this.applyPermissionsPolicy();
     this.ensureSpecs();
     return this;
   }

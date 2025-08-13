@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export abstract class EntityId {
   constructor(protected readonly _value: string) {
-    this.validateId(_value);
+    // this.validateId(_value);
     this._value = _value.trim();
   }
 

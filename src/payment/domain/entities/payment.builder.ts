@@ -8,11 +8,19 @@ import {
 } from './payment';
 
 export class PaymentBuilder implements IPaymentBuilder {
-  private params: IPaymentParams;
+  private params: Pick<
+    IPaymentParams,
+    'chargeAmount' | 'paymentAmount' | 'status' | 'userId'
+  >;
   private calculationPolicy: ICalculationPolicy;
   private specs: ISpecification<Payment>[];
 
-  withParams(p: IPaymentParams) {
+  withParams(
+    p: Pick<
+      IPaymentParams,
+      'chargeAmount' | 'paymentAmount' | 'status' | 'userId'
+    >,
+  ) {
     this.params = p;
     return this;
   }
@@ -28,6 +36,10 @@ export class PaymentBuilder implements IPaymentBuilder {
   }
 
   build(): Payment {
-    return new Payment(this.params, this.calculationPolicy, this.specs);
+    return new Payment(
+      this.params as IPaymentParams,
+      this.calculationPolicy,
+      this.specs,
+    );
   }
 }

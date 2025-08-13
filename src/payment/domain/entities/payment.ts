@@ -46,9 +46,11 @@ export class Payment {
   }
 
   private applyCalculationPolicy(): this {
-    this.params.paymentAmount = this.calculationPolicy.calculatePayment(
-      this.params.chargeAmount,
-    );
+    if (this.calculationPolicy) {
+      this.params.paymentAmount = this.calculationPolicy.calculatePayment(
+        this.params.chargeAmount,
+      );
+    }
     return this;
   }
 

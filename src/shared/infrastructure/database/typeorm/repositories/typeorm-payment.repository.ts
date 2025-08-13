@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
+import { InjectEntityManager } from '@nestjs/typeorm';
 import { IPaymentRepo } from '../../../../../payment/application/repositories/payment.repository';
 import {
   ICalculationPolicy,
@@ -23,10 +23,13 @@ import {
 
 @Injectable()
 export class TypeOrmPaymentRepository implements IPaymentRepo {
+  private paymRepo: Repository<TypeOrmPayment>;
   constructor(
-    @InjectRepository(TypeOrmPayment)
-    private readonly paymRepo: Repository<TypeOrmPayment>,
-  ) {}
+    @InjectEntityManager()
+    private readonly manager: EntityManager,
+  ) {
+    this.paymRepo = this.manager.getRepository(TypeOrmPayment);
+  }
 
   async save(payment: Payment): Promise<void> {
     const typeOrmPayment = this.toTypeOrmEntity(payment);
