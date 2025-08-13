@@ -1,8 +1,8 @@
+import { UserId } from '../../../shared/domain/value-objects/user-id.vo';
 import { UserResourceEnum, UserTypeEnum } from '../../domain/entities/user';
 import { UserBuilder } from '../../domain/entities/user.builder';
 import { UserSpecificationFactory } from '../factories/specifications.factory';
 import { IUpdateUserRepo } from '../repositories/user.repository';
-import { UserId } from '../../../shared/domain/value-objects/user-id.vo';
 
 export interface IUpdateUserProfileUseCaseContext {
   id: string;

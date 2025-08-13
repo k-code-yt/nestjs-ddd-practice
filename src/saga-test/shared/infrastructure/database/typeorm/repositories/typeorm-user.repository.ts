@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { UserPermissionDto } from '../../../../../payment/application/dtos/user-permission.dto';
-import { Permission } from '../../../../../user/domain/value-objects/permission.vo';
 import { UserId } from '../../../../domain/value-objects/user-id.vo';
 import { TypeOrmUser } from '../entities/typeorm-user';
 import { IUserRepo } from '../../../../../payment/application/repositories/user.repository';
@@ -13,6 +12,7 @@ import {
   ISaveUserRepo,
   IUpdateUserRepo,
 } from '../../../../../user/application/repositories/user.repository';
+import { Permission } from '../../../../../user/domain/value-objects/permission.vo';
 import { User } from '../../../../../user/domain/entities/user';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class TypeOrmUserRepository
   ) {
     this.userRepo = this.manager.getRepository(TypeOrmUser);
   }
-  
+
   async validateUserExists(userId: UserId): Promise<boolean> {
     const count = await this.userRepo.count({
       where: { id: userId.value },

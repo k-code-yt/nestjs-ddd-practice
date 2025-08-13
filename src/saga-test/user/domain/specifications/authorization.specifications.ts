@@ -1,4 +1,4 @@
-import { ISpecification } from '../../../shared/interfaces/specification.interface';
+import { ISpecification } from '../../../saga-test/shared/interfaces/specification.interface';
 import { User } from '../entities/user';
 
 export interface IUserAuthLockedContext {

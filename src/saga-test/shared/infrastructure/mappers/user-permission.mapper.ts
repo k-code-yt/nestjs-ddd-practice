@@ -4,7 +4,6 @@ import {
   ResourceType,
   PermissionType,
 } from '../../../user/domain/value-objects/permission.vo';
-
 export class UserPermissionMapper {
   static toPaymentPermissionDto(permissions: Permission[]): UserPermissionDto {
     const paymentPermissions = permissions.filter(

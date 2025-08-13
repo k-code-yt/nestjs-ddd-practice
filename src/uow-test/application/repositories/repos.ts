@@ -1,4 +1,4 @@
-import { Payment } from '../../../payment/domain/entities/payment';
+import { Payment } from '../../../saga-test/payment/domain/entities/payment';
 import { Order } from '../../domain/order.entity';
 import { User } from '../../domain/user.entity';
 

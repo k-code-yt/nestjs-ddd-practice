@@ -1,7 +1,7 @@
-import { Payment } from '../../../../payment/domain/entities/payment';
-import { Money } from '../../../../shared/domain/value-objects/money.vo';
-import { PaymentId } from '../../../../shared/domain/value-objects/payment-id.vo';
-import { UserId } from '../../../../shared/domain/value-objects/user-id.vo';
+import { Payment } from '../../../../saga-test/payment/domain/entities/payment';
+import { Money } from '../../../../saga-test/shared/domain/value-objects/money.vo';
+import { PaymentId } from '../../../../saga-test/shared/domain/value-objects/payment-id.vo';
+import { UserId } from '../../../../saga-test/shared/domain/value-objects/user-id.vo';
 import { PaymentTypeOrmEntity } from '../entities/orm-payment.entity';
 import { UserTypeOrmEntity } from '../entities/orm-user.entity';
 

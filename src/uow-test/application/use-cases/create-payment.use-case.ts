@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { IUserPaymentUnitOfWork } from '../ports/unit-of-work.interface';
-import { PaymentStatusEnum } from '../../../payment/domain/entities/payment';
-import { PaymentBuilder } from '../../../payment/domain/entities/payment.builder';
-import { UserId } from '../../../shared/domain/value-objects/user-id.vo';
-import { Money } from '../../../shared/domain/value-objects/money.vo';
+import { UserId } from '../../../saga-test/shared/domain/value-objects/user-id.vo';
+import { Money } from '../../../saga-test/shared/domain/value-objects/money.vo';
+import { PaymentStatusEnum } from '../../../saga-test/payment/domain/entities/payment';
+import { PaymentBuilder } from '../../../saga-test/payment/domain/entities/payment.builder';
 
 @Injectable()
 export class CreatePaymentUOWUseCase {

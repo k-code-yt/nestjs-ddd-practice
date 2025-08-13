@@ -10,7 +10,7 @@ import { TypeOrmUser } from './typeorm-user';
 import {
   PermissionType,
   ResourceType,
-} from '../../../../../user/domain/value-objects/permission.vo';
+} from '../../../../../../user/domain/value-objects/permission.vo';
 
 @Entity('permissions')
 export class TypeOrmPermission {
