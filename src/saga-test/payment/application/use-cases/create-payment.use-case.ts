@@ -23,6 +23,12 @@ export interface ICreatePaymentUseCaseParams {
   chargeAmount: number;
 }
 
+export interface ICreatePaymentMessagePayload {
+  paymentId: PaymentId;
+  userId: UserId;
+  chargeAmount: Money;
+}
+
 export class CreatePaymentUseCase {
   constructor(
     private readonly dataAccess: IDataAccess,
@@ -60,7 +66,6 @@ export class CreatePaymentUseCase {
 
     payment.post();
     await this.dataAccess.paymRepo.save(payment);
-
     // TODO -> add mapper here -> for presenter layer
     return payment;
   }

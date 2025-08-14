@@ -7,8 +7,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PaymentStatusEnum } from '../../../../payment/domain/entities/payment';
 import { UserTypeOrmEntity } from './orm-user.entity';
+import { PaymentStatusEnum } from '../../../../saga-test/payment/domain/entities/payment';
 
 @Entity('payments')
 export class PaymentTypeOrmEntity {
