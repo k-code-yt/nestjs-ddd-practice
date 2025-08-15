@@ -7,6 +7,8 @@ import { PaymentId } from '../../../shared/domain/value-objects/payment-id.vo';
 import { UserId } from '../../../shared/domain/value-objects/user-id.vo';
 import { IPaymentRepo } from '../repositories/payment.repository';
 import { IUserRepo } from '../repositories/user.repository';
+import { MessagingProducer } from '../../../shared/infrastructure/messaging/messaging.interfaces';
+import { Messaging } from '../../../shared/infrastructure/messaging/messaging.config';
 
 export enum PaymentUserTypeEnum {
   regular = 'regular',
@@ -33,6 +35,8 @@ export class CreatePaymentUseCase {
   constructor(
     private readonly dataAccess: IDataAccess,
     private readonly params: ICreatePaymentUseCaseParams,
+    // TODO -> remove from here
+    private readonly msgService: MessagingProducer,
   ) {}
 
   async execute() {
@@ -65,7 +69,12 @@ export class CreatePaymentUseCase {
       .build();
 
     payment.post();
+
     await this.dataAccess.paymRepo.save(payment);
+    await this.msgService.produce(
+      { msg: 'test' },
+      Messaging.PaymentEventsEnum.PaymentProcessed,
+    );
     // TODO -> add mapper here -> for presenter layer
     return payment;
   }

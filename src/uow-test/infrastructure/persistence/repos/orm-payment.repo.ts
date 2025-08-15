@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, EntityManager } from 'typeorm';
-import { Payment } from '../../../../payment/domain/entities/payment';
 import { IPaymentRepository } from '../../../application/repositories/repos';
 import { PaymentTypeOrmEntity } from '../entities/orm-payment.entity';
 import { PaymentMapper } from '../mappers/payment.mapper';
+import { Payment } from '../../../../saga-test/payment/domain/entities/payment';
 
 @Injectable()
 export class TypeOrmPaymentRepository implements IPaymentRepository {

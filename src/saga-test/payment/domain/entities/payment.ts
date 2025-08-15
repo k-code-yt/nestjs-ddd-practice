@@ -61,9 +61,10 @@ export class Payment {
   }
 
   public post(): this {
+    this.status = PaymentStatusEnum.active;
     this.applyIdIfMissing();
     this.applyCalculationPolicy();
-    this.ensureSpecs();
+    // this.ensureSpecs();
     return this;
   }
 

@@ -3,19 +3,19 @@ import {
   OnApplicationShutdown,
   Inject,
   Logger,
+  Injectable,
 } from '@nestjs/common';
 import { Producer, Message, CompressionTypes } from 'kafkajs';
 import { KAFKA_PRODUCER } from './kafka.config';
-import {
-  ICombinedMessageServiceSteps,
-  IMessageServiceStepsToConsume,
-  IMessageServiceStepsToProduce,
-  MessagingProducer,
-} from '../messaging.interfaces';
+import { MessagingProducer } from '../messaging.interfaces';
+import { Messaging } from '../messaging.config';
 
+@Injectable()
 export class KafkaProducer
   implements OnModuleInit, OnApplicationShutdown, MessagingProducer
 {
+  private readonly logger = new Logger(KafkaProducer.name);
+
   constructor(
     @Inject(KAFKA_PRODUCER)
     private readonly producer: Producer,
@@ -31,20 +31,47 @@ export class KafkaProducer
 
   public async produce(
     message: any,
-    step: IMessageServiceStepsToProduce[number],
+    event: Messaging.AllDomainEvents,
+    options?: {
+      key?: string;
+      partition?: number;
+      headers?: Record<string, string>;
+    },
   ): Promise<void> {
+    const topic = Messaging.Config.getTopicName(event);
     const payload: Message = {
-      value: JSON.stringify(message),
-      key: step,
+      value: JSON.stringify({
+        ...message,
+        eventType: event,
+        timestamp: new Date().toISOString(),
+        messageId: `${event}-${Math.floor(Date.now() / 1000)}-${Math.floor(Math.random() * 1000)}`,
+      }),
+      key: options?.key || event,
+      partition: options?.partition,
+      headers: {
+        ...options?.headers,
+        'event-type': event,
+        'content-type': 'application/json',
+      },
     };
-    const topic = KafkaProducer.getTopicFromStep(step);
 
-    await this.producer.send({
-      topic,
-      messages: [payload],
-      compression: CompressionTypes.GZIP,
-    });
-    Logger.log(`topic: ${topic}`, 'PRODUCING');
+    try {
+      const result = await this.producer.send({
+        topic,
+        messages: [payload],
+        compression: CompressionTypes.GZIP,
+      });
+
+      this.logger.log(
+        `Event published: ${event} | Topic: ${topic} | Partition: ${result[0].partition} | Offset: ${result[0].baseOffset}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to publish event: ${event} | Topic: ${topic} | Error: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
   }
 
   private async connect() {
@@ -59,19 +86,5 @@ export class KafkaProducer
       });
       await this.connect();
     }
-  }
-
-  public static topicSeparator = '__';
-  public static getTopicFromStep(
-    step: ICombinedMessageServiceSteps[number],
-  ): string {
-    return step;
-  }
-  public static getStepFromTopic(
-    topic: string,
-  ): IMessageServiceStepsToConsume[number] {
-    return topic.split(
-      this.topicSeparator,
-    )[1] as IMessageServiceStepsToConsume[number];
   }
 }

@@ -1,21 +1,32 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
-import { KafkaMessageModule } from './kafka/kafka.module';
-import { IMessageServiceBootstrapOptions } from './messaging.interfaces';
+import { DynamicModule, Module } from '@nestjs/common';
 import { Messaging } from './messaging.config';
+import { IDomainMessagingOptions } from './messaging.interfaces';
+import { KafkaDomainModule } from './kafka/kafka-domain.module';
+import { DomainNameEnum } from '../../../_lib';
 
-@Global()
 @Module({})
 export class MessageModule {
-  static forRoot(options: IMessageServiceBootstrapOptions): DynamicModule {
-    const module =
-      options.driver == Messaging.MessageDriverTypeEnum.kafka
-        ? [KafkaMessageModule.forRoot(options)]
+  static forDomain(
+    domain: DomainNameEnum,
+    driver: Messaging.MessageDriverTypeEnum,
+  ): DynamicModule {
+    const eventsToConsume = Messaging.Config.getEventsForDomain(domain);
+
+    const options: IDomainMessagingOptions = {
+      domain,
+      consumerGroupPrefix: domain,
+      eventsToConsume,
+    };
+
+    const modules =
+      driver === Messaging.MessageDriverTypeEnum.kafka
+        ? [KafkaDomainModule.forDomain(options)]
         : [];
 
     return {
       module: MessageModule,
-      imports: module,
-      exports: module,
+      imports: modules,
+      exports: modules,
     };
   }
 }
