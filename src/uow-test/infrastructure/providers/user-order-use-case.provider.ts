@@ -1,6 +1,6 @@
 import { IUnitOfWork } from '../../application/ports/unit-of-work.interface';
 import { TransferOrderOwnershipUseCase } from '../../application/use-cases/transfer-order-ownership.use-case';
-import { ProxyUnitOfWorkFactory } from '../persistence/proxy-unit-of-work';
+import { ProxyUnitOfWorkFactory } from '../persistence/uow/proxy-unit-of-work';
 import { UserOrderUnitOfWork } from '../persistence/uow/user-order.uow';
 
 export const UserOrderUseCaseProvider = {

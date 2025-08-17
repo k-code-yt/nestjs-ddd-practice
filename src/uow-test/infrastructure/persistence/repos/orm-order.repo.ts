@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 import { IOrderRepository } from '../../../application/repositories/repos';
-import { Order } from '../../../domain/order.entity';
+import { Order } from '../../../domain/entities/order.entity';
 import { OrderTypeOrmEntity } from '../entities/orm-order.entity';
 import { OrderMapper } from '../mappers/order.mapper';
 
@@ -10,6 +10,7 @@ export class TypeOrmOrderRepository implements IOrderRepository {
   async findById(id: string): Promise<Order | null> {
     const entity = await this.manager.findOne(OrderTypeOrmEntity, {
       where: { id },
+      relations: ['user'],
     });
     return entity && OrderMapper.toDomain(entity);
   }

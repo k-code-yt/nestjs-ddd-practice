@@ -1,7 +1,7 @@
-import { ISpecification } from '../../../shared/interfaces/specification.interface';
-import { Money } from '../../../shared/domain/value-objects/money.vo';
-import { UserId } from '../../../shared/domain/value-objects/user-id.vo';
-import { PaymentId } from '../../../shared/domain/value-objects/payment-id.vo';
+import { Money } from '../value-objects/money.vo';
+import { OrderId } from '../value-objects/order-id.vo';
+import { PaymentId } from '../value-objects/payment-id.vo';
+import { UserId } from '../value-objects/user-id.vo';
 
 export enum PaymentStatusEnum {
   active = 'active',
@@ -18,6 +18,7 @@ export interface ICalculationPolicy {
 export interface IPaymentParams {
   id: PaymentId;
   userId: UserId;
+  orderId: OrderId;
   chargeAmount: Money;
   paymentAmount?: Money;
   status?: PaymentStatusEnum;
@@ -28,32 +29,7 @@ export interface IPaymentBuilder {
 }
 
 export class Payment {
-  constructor(
-    private readonly params: IPaymentParams,
-    private readonly calculationPolicy: ICalculationPolicy,
-    private readonly specs: ISpecification<Payment>[],
-  ) {}
-
-  private ensureSpecs(): void {
-    if (this.specs?.length > 0) {
-      for (const s of this.specs) {
-        const isSatisfied = s.isSatisfiedBy(this);
-        if (!isSatisfied) {
-          // TODO -> add propper domain error
-          throw new Error(s.reason(this));
-        }
-      }
-    }
-  }
-
-  private applyCalculationPolicy(): this {
-    if (this.calculationPolicy) {
-      this.params.paymentAmount = this.calculationPolicy.calculatePayment(
-        this.params.chargeAmount,
-      );
-    }
-    return this;
-  }
+  constructor(private readonly params: IPaymentParams) {}
 
   public applyIdIfMissing() {
     if (!this.params.id) {
@@ -64,8 +40,6 @@ export class Payment {
   public post(): this {
     this.status = PaymentStatusEnum.active;
     this.applyIdIfMissing();
-    this.applyCalculationPolicy();
-    // this.ensureSpecs();
     return this;
   }
 
@@ -95,5 +69,9 @@ export class Payment {
 
   get userId(): UserId {
     return this.params.userId;
+  }
+
+  get orderId(): OrderId {
+    return this.params.orderId;
   }
 }

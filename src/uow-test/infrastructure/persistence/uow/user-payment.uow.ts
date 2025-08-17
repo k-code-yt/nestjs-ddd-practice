@@ -1,34 +1,35 @@
 import { Logger } from '@nestjs/common';
-import { QueryRunner, EntityManager, DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { IUserPaymentUnitOfWork } from '../../../application/ports/unit-of-work.interface';
 import {
   IUserRepository,
   IPaymentRepository,
+  IOrderRepository,
 } from '../../../application/repositories/repos';
 import { TypeOrmUserRepository } from '../repos/orm-user.repo';
-import { BaseUnitOfWork } from './base.uow';
+import { BaseUnitOfWork, IUOWInitializeOptions } from './base.uow';
 import { TypeOrmPaymentRepository } from '../repos/orm-payment.repo';
+import { TypeOrmOrderRepository } from '../repos/orm-order.repo';
 
 export class UserPaymentUnitOfWork
   extends BaseUnitOfWork
   implements IUserPaymentUnitOfWork
 {
-  private manager: EntityManager;
   private userRepository: IUserRepository;
   private paymentRepository: IPaymentRepository;
+  private orderRepository: IOrderRepository;
 
   constructor(dataSource: DataSource) {
     super(dataSource);
   }
 
-  async initialize(): Promise<UserPaymentUnitOfWork> {
-    this.queryRunner = this.dataSource.createQueryRunner();
-    await this.queryRunner.connect();
-    await this.queryRunner.startTransaction('SERIALIZABLE');
-    this.manager = this.queryRunner.manager;
-
+  async initialize(
+    options?: IUOWInitializeOptions,
+  ): Promise<UserPaymentUnitOfWork> {
+    await this.initManager(options);
     this.userRepository = new TypeOrmUserRepository(this.manager);
     this.paymentRepository = new TypeOrmPaymentRepository(this.manager);
+    this.orderRepository = new TypeOrmOrderRepository(this.manager);
 
     Logger.warn(`TX = ${this.id}`, 'TX:START:UserPayment');
     return this;
@@ -40,6 +41,10 @@ export class UserPaymentUnitOfWork
 
   getPaymentRepository(): IPaymentRepository {
     return this.paymentRepository;
+  }
+
+  getOrderRepository(): IOrderRepository {
+    return this.orderRepository;
   }
 
   public static INJECTION_TOKEN = Symbol('UserPaymentUnitOfWork');

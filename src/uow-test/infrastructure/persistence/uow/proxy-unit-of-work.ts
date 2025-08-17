@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { BaseUnitOfWork } from './uow/base.uow';
+import { BaseUnitOfWork, IUOWInitializeOptions } from './base.uow';
 
 @Injectable()
 export class ProxyUnitOfWorkFactory {
@@ -9,7 +9,11 @@ export class ProxyUnitOfWorkFactory {
   createTransactionalProxy<
     T extends { execute(...args: any[]): Promise<any> },
     K extends BaseUnitOfWork,
-  >(useCase: T, cls: new (dataSource: DataSource) => K): T {
+  >(
+    useCase: T,
+    cls: new (dataSource: DataSource) => K,
+    options?: IUOWInitializeOptions,
+  ): T {
     return new Proxy(useCase, {
       get: (target, prop) => {
         if (prop === 'execute') {
@@ -20,7 +24,7 @@ export class ProxyUnitOfWorkFactory {
             }
 
             const transactionalUow = new cls(this.dataSource);
-            await transactionalUow.initialize();
+            await transactionalUow.initialize(options);
 
             (target as any).unitOfWork = transactionalUow;
 

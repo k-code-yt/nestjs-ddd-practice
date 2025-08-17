@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { UserTypeOrmEntity } from './orm-user.entity';
+import { PaymentTypeOrmEntity } from './orm-payment.entity';
 
 @Entity('orders')
 export class OrderTypeOrmEntity {
@@ -18,4 +26,7 @@ export class OrderTypeOrmEntity {
   @ManyToOne(() => UserTypeOrmEntity, (user) => user.orders)
   @JoinColumn({ name: 'userId' })
   user: UserTypeOrmEntity;
+
+  @OneToMany(() => PaymentTypeOrmEntity, (payment) => payment.order)
+  payments: PaymentTypeOrmEntity[];
 }

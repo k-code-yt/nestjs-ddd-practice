@@ -1,3 +1,4 @@
+import { UserId } from '../value-objects/user-id.vo';
 import { User } from './user.entity';
 
 export class Order {

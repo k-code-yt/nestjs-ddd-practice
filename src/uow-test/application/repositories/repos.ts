@@ -1,6 +1,6 @@
-import { Payment } from '../../../saga-test/payment/domain/entities/payment';
-import { Order } from '../../domain/order.entity';
-import { User } from '../../domain/user.entity';
+import { Order } from '../../domain/entities/order.entity';
+import { Payment } from '../../domain/entities/payment.entity';
+import { User } from '../../domain/entities/user.entity';
 
 export interface IUserRepository {
   findById(id: string): Promise<User | null>;

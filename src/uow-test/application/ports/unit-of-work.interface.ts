@@ -12,4 +12,5 @@ export interface IUnitOfWork {
 export interface IUserPaymentUnitOfWork {
   getUserRepository(): IUserRepository;
   getPaymentRepository(): IPaymentRepository;
+  getOrderRepository(): IOrderRepository;
 }

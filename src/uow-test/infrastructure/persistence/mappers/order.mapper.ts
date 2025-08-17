@@ -1,4 +1,4 @@
-import { Order } from '../../../domain/order.entity';
+import { Order } from '../../../domain/entities/order.entity';
 import { OrderTypeOrmEntity } from '../entities/orm-order.entity';
 
 export class OrderMapper {

@@ -1,4 +1,4 @@
-import { User } from '../../../domain/user.entity';
+import { User } from '../../../domain/entities/user.entity';
 import { UserTypeOrmEntity } from '../entities/orm-user.entity';
 import { OrderMapper } from './order.mapper';
 

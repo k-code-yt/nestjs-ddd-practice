@@ -3,7 +3,7 @@ import { IUnitOfWork } from '../ports/unit-of-work.interface';
 
 @Injectable()
 export class TransferOrderOwnershipUseCase {
-  constructor(private unitOfWork: IUnitOfWork) {}
+  constructor(private readonly unitOfWork: IUnitOfWork) {}
 
   async execute(orderId: string, newUserId: string): Promise<void> {
     const userRepo = this.unitOfWork.getUserRepository();

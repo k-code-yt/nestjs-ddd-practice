@@ -10,7 +10,7 @@ export const databaseConfig: TypeOrmModuleOptions = {
   port: 5432,
   username: 'user',
   password: 'pass',
-  database: 'uow_test',
+  database: 'saga_test',
   entities: [TypeOrmPayment, TypeOrmUser, TypeOrmPermission, TypeOrmUserAuth],
   synchronize: true,
   logging: true,

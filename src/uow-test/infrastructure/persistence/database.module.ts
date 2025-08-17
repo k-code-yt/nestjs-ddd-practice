@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 import { databaseConfig } from './database.config';
 import { OrderTypeOrmEntity } from './entities/orm-order.entity';
 import { UserTypeOrmEntity } from './entities/orm-user.entity';
-import { ProxyUnitOfWorkFactory } from './proxy-unit-of-work';
+import { ProxyUnitOfWorkFactory } from './uow/proxy-unit-of-work';
 import { UserOrderUnitOfWork } from './uow/user-order.uow';
 import { PaymentTypeOrmEntity } from './entities/orm-payment.entity';
 import { UserPaymentUnitOfWork } from './uow/user-payment.uow';
@@ -42,6 +42,7 @@ import { UserPaymentUseCaseProvider } from '../providers/user-payment-use-case.p
   exports: [
     UserOrderUnitOfWork.INJECTION_TOKEN,
     UserPaymentUnitOfWork.INJECTION_TOKEN,
+    ProxyUnitOfWorkFactory,
     UserOrderUseCaseProvider,
     UserPaymentUseCaseProvider,
   ],

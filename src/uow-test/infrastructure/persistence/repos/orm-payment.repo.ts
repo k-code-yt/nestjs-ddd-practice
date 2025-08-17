@@ -3,7 +3,7 @@ import { Repository, EntityManager } from 'typeorm';
 import { IPaymentRepository } from '../../../application/repositories/repos';
 import { PaymentTypeOrmEntity } from '../entities/orm-payment.entity';
 import { PaymentMapper } from '../mappers/payment.mapper';
-import { Payment } from '../../../../saga-test/payment/domain/entities/payment';
+import { Payment } from '../../../domain/entities/payment.entity';
 
 @Injectable()
 export class TypeOrmPaymentRepository implements IPaymentRepository {

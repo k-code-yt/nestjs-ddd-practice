@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { UserTypeOrmEntity } from './orm-user.entity';
 import { PaymentStatusEnum } from '../../../../saga-test/payment/domain/entities/payment';
+import { OrderTypeOrmEntity } from './orm-order.entity';
 
 @Entity('payments')
 export class PaymentTypeOrmEntity {
@@ -39,6 +40,12 @@ export class PaymentTypeOrmEntity {
   })
   @JoinColumn({ name: 'userId' })
   user: UserTypeOrmEntity;
+
+  @ManyToOne(() => OrderTypeOrmEntity, (order) => order.payments, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'orderId' })
+  order: OrderTypeOrmEntity;
 
   @CreateDateColumn()
   createdAt: Date;

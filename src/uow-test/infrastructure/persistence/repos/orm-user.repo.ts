@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 import { IUserRepository } from '../../../application/repositories/repos';
 import { UserTypeOrmEntity } from '../entities/orm-user.entity';
 import { UserMapper } from '../mappers/user.mapper';
-import { User } from '../../../domain/user.entity';
+import { User } from '../../../domain/entities/user.entity';
 
 export class TypeOrmUserRepository implements IUserRepository {
   constructor(private manager: EntityManager) {}
