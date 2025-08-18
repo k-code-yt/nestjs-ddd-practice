@@ -2,6 +2,7 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { MessageModule } from '../../shared/infrastructure/messaging/messaging.module';
 import { DomainNameEnum } from '../../_lib';
 import { InfraModuleBootstrapOptions } from '../../shared/interfaces/infra-bootsrap-options.interface';
+import { PaymentMessagingService } from './messaging.service';
 
 @Module({})
 export class PaymentMessageModule {
@@ -15,6 +16,7 @@ export class PaymentMessageModule {
       module: PaymentMessageModule,
       imports: [module],
       exports: [module],
+      providers: [PaymentMessagingService],
     };
   }
 }

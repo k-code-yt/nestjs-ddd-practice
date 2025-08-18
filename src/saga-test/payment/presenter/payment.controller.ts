@@ -1,8 +1,10 @@
-import { Controller, OnModuleInit } from '@nestjs/common';
+import { Controller, Logger, OnModuleInit } from '@nestjs/common';
 import { CreatePaymentUseCase } from '../application/use-cases/create-payment.use-case';
 import { IPaymentRepo } from '../application/repositories/payment.repository';
 import { IUserRepo } from '../application/repositories/user.repository';
 import { MessagingProducer } from '../../shared/infrastructure/messaging/messaging.interfaces';
+import { OnEvent } from '@nestjs/event-emitter';
+import { Messaging } from '../../shared/infrastructure/messaging/messaging.config';
 
 // TODOs
 // test consumer
@@ -35,5 +37,10 @@ export class PaymentController implements OnModuleInit {
       this.msgProducer,
     );
     await uc.execute();
+  }
+
+  @OnEvent(Messaging.PaymentEventsEnum.PaymentProcessed)
+  handleOrderCreatedEvent(payload: any) {
+    Logger.log(payload);
   }
 }

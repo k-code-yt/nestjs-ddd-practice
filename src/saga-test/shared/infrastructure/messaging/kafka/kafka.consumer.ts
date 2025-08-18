@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  OnApplicationShutdown,
-  Logger,
-  Inject,
-} from '@nestjs/common';
+import { OnApplicationShutdown, Logger, Inject } from '@nestjs/common';
 import { Consumer, EachMessagePayload } from 'kafkajs';
 import { Messaging } from '../messaging.config';
 import {
@@ -20,7 +15,6 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
   >();
   private isRunning = false;
   constructor(
-    @Inject()
     private readonly consumer: Consumer,
     private readonly domainOptions: IDomainMessagingOptions,
   ) {}
@@ -48,6 +42,7 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
         eachMessage: async (payload: EachMessagePayload) => {
           await this.handleMessage(payload);
         },
+        autoCommit: false,
       });
 
       this.isRunning = true;

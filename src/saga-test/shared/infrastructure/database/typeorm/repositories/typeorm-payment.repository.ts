@@ -4,7 +4,8 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { IPaymentRepo } from '../../../../../payment/application/repositories/payment.repository';
 import {
   ICalculationPolicy,
-  IPaymentParams,
+  IPaymentInput,
+  IPaymentProps,
   Payment,
   PaymentStatusEnum,
 } from '../../../../../payment/domain/entities/payment';
@@ -73,7 +74,7 @@ export class TypeOrmPaymentRepository implements IPaymentRepo {
   }
 
   private toDomainEntity(typeOrmPayment: TypeOrmPayment): Payment {
-    const params: IPaymentParams = {
+    const params: IPaymentProps = {
       id: PaymentId.fromString(typeOrmPayment.id),
       userId: UserId.fromString(typeOrmPayment.user.id),
       chargeAmount: new Money(typeOrmPayment.chargeAmount),

@@ -15,12 +15,15 @@ export interface ICalculationPolicy {
   calculatePayment(amount: Money): Money;
 }
 
-export interface IPaymentParams {
+export type IPaymentInput = Pick<IPaymentProps, 'chargeAmount' | 'userId'> &
+  Partial<Pick<IPaymentProps, 'id'>>;
+
+export interface IPaymentProps {
   id: PaymentId;
   userId: UserId;
   chargeAmount: Money;
-  paymentAmount?: Money;
-  status?: PaymentStatusEnum;
+  paymentAmount: Money | undefined;
+  status: PaymentStatusEnum;
 }
 
 export interface IPaymentBuilder {
@@ -28,11 +31,14 @@ export interface IPaymentBuilder {
 }
 
 export class Payment {
+  private props: IPaymentProps;
   constructor(
-    private readonly params: IPaymentParams,
+    private readonly inputParams: IPaymentInput,
     private readonly calculationPolicy: ICalculationPolicy,
     private readonly specs: ISpecification<Payment>[],
-  ) {}
+  ) {
+    this.props = { ...inputParams } as IPaymentProps;
+  }
 
   private ensureSpecs(): void {
     if (this.specs?.length > 0) {
@@ -48,21 +54,21 @@ export class Payment {
 
   private applyCalculationPolicy(): this {
     if (this.calculationPolicy) {
-      this.params.paymentAmount = this.calculationPolicy.calculatePayment(
-        this.params.chargeAmount,
+      this.props.paymentAmount = this.calculationPolicy.calculatePayment(
+        this.inputParams.chargeAmount,
       );
     }
     return this;
   }
 
   public applyIdIfMissing() {
-    if (!this.params.id) {
-      this.params.id = PaymentId.create();
+    if (!this.inputParams.id) {
+      this.props.id = PaymentId.create();
     }
   }
 
   public post(): this {
-    this.status = PaymentStatusEnum.active;
+    this.props.status = PaymentStatusEnum.active;
     this.applyIdIfMissing();
     this.applyCalculationPolicy();
     // this.ensureSpecs();
@@ -70,30 +76,30 @@ export class Payment {
   }
 
   get chargeAmount(): Money {
-    return this.params.chargeAmount;
+    return this.props.chargeAmount;
   }
 
   set chargeAmount(amount: Money) {
-    this.params.chargeAmount = amount;
+    this.props.chargeAmount = amount;
   }
 
-  get paymentAmount(): Money | undefined {
-    return this.params.paymentAmount;
+  get paymentAmount(): Money {
+    return this.props.paymentAmount as Money;
   }
 
-  get status(): PaymentStatusEnum | undefined {
-    return this.params.status;
+  get status(): PaymentStatusEnum {
+    return this.props.status;
   }
 
-  set status(status: PaymentStatusEnum | undefined) {
-    this.params.status = status;
+  set status(status: PaymentStatusEnum) {
+    this.props.status = status;
   }
 
   get id(): PaymentId {
-    return this.params.id;
+    return this.props.id;
   }
 
   get userId(): UserId {
-    return this.params.userId;
+    return this.props.userId;
   }
 }

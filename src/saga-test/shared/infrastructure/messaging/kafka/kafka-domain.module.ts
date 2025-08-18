@@ -59,7 +59,7 @@ export class KafkaDomainModule {
       },
       {
         provide: KafkaConsumer,
-        useFactory: (consumer, domainOptions) => {
+        useFactory: (_, consumer, domainOptions) => {
           return new KafkaConsumer(consumer, domainOptions);
         },
         inject: [KafkaProducer, consumerToken, KAFKA_DOMAIN_MESSAGING_OPTIONS],

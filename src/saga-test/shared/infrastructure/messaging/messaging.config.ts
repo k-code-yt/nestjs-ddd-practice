@@ -98,6 +98,49 @@ export namespace Messaging {
       return domainEventMap[domain] || [];
     }
 
+    // Choreography SAGA
+    public static getEventsToConsume(domain: string): AllDomainEvents[] {
+      const domainEventMap: Record<string, AllDomainEvents[]> = {
+        order: [
+          // Order domain consumes payment events for saga coordination
+          PaymentEventsEnum.PaymentProcessed,
+          PaymentEventsEnum.PaymentFailed,
+          // Order domain consumes saga events
+          SagaEventsEnum.OrderPaymentSagaStarted,
+          SagaEventsEnum.OrderPaymentSagaCompleted,
+          SagaEventsEnum.OrderPaymentSagaFailed,
+        ],
+        payment: [
+          // ----FOR TESTING
+          PaymentEventsEnum.PaymentProcessed,
+          PaymentEventsEnum.PaymentFailed,
+          // ----
+          OrderEventsEnum.OrderCreated,
+          OrderEventsEnum.OrderCancelled,
+          // Payment domain consumes saga events
+          SagaEventsEnum.OrderPaymentSagaStarted,
+        ],
+        user: [
+          // User domain produces these
+          ...Object.values(UserEventsEnum),
+          // User domain consumes order/payment events for notifications
+          OrderEventsEnum.OrderCompleted,
+          OrderEventsEnum.OrderFailed,
+          PaymentEventsEnum.PaymentProcessed,
+          PaymentEventsEnum.PaymentFailed,
+        ],
+        saga: [
+          //   // Saga orchestrator consumes all relevant events
+          //   ...Object.values(OrderEventsEnum),
+          //   ...Object.values(PaymentEventsEnum),
+          //   // Saga orchestrator produces saga events
+          //   ...Object.values(SagaEventsEnum),
+        ],
+      };
+
+      return domainEventMap[domain] || [];
+    }
+
     public static getTopicName(event: AllDomainEvents): string {
       return `${process.env.SERVICE_NAME || 'monolith'}.${event}`;
     }

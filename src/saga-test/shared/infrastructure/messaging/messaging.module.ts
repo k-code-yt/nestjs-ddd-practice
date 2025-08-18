@@ -10,7 +10,7 @@ export class MessageModule {
     domain: DomainNameEnum,
     driver: Messaging.MessageDriverTypeEnum,
   ): DynamicModule {
-    const eventsToConsume = Messaging.Config.getEventsForDomain(domain);
+    const eventsToConsume = Messaging.Config.getEventsToConsume(domain);
 
     const options: IDomainMessagingOptions = {
       domain,
