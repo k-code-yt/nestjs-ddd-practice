@@ -22,7 +22,7 @@ export class PaymentController implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    await this.create();
+    // await this.create();
   }
 
   async create() {

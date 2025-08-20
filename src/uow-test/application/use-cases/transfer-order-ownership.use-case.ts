@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { IUnitOfWork } from '../ports/unit-of-work.interface';
+import { UserOrderUOW } from '../repositories/repos';
 
 @Injectable()
 export class TransferOrderOwnershipUseCase {
-  constructor(private readonly unitOfWork: IUnitOfWork) {}
+  constructor(private readonly unitOfWork: UserOrderUOW) {}
 
   async execute(orderId: string, newUserId: string): Promise<void> {
     const userRepo = this.unitOfWork.getUserRepository();

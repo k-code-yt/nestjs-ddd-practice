@@ -17,24 +17,24 @@ const domainInfraModules = [
   PaymentMessageModule.forRoot({ messagingDriver: msgDriver }),
 ];
 
-@Module({
-  imports: [
-    EventEmitterModule.forRoot({ global: true }),
-    ScheduleModule.forRoot(),
-    InfraModule.forRoot({
-      messagingDriver: msgDriver,
-    }),
-    ...domainInfraModules,
-  ],
-  controllers: [PaymentController],
-  providers: [],
-})
-export class AppModule {}
-
-// For UOW testing
 // @Module({
-//   imports: [InfrastructureModule],
-//   controllers: [OrderController],
+//   imports: [
+//     EventEmitterModule.forRoot({ global: true }),
+//     ScheduleModule.forRoot(),
+//     InfraModule.forRoot({
+//       messagingDriver: msgDriver,
+//     }),
+//     ...domainInfraModules,
+//   ],
+//   controllers: [PaymentController],
 //   providers: [],
 // })
 // export class AppModule {}
+
+// For UOW testing
+@Module({
+  imports: [InfrastructureModule],
+  controllers: [OrderController],
+  providers: [],
+})
+export class AppModule {}

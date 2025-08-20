@@ -1,9 +1,10 @@
-select u.id, o.id oid, p.id pid from users u
+select  o.id oid, u.id, u.name, p.id pid from users u
 left JOIN orders o
 	on o."userId" = u.id
 left JOIN payments p
 	on p."orderId"= o.id
-where u.id = 'user-003'
+-- where u.id = 'user-002'
+order by o.id
 
 
 select u.id, p.id pid from users u

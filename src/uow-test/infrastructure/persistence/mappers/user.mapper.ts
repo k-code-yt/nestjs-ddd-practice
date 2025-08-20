@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { User } from '../../../domain/entities/user.entity';
 import { UserTypeOrmEntity } from '../entities/orm-user.entity';
 import { OrderMapper } from './order.mapper';
@@ -12,7 +13,23 @@ export class UserMapper {
     const entity = new UserTypeOrmEntity();
     entity.id = domain.id;
     entity.email = domain.email;
-    entity.name = domain.name;
+    entity.name = this.getRandomName();
+    Logger.log(`Changing name from ${domain.name} to ${entity.name}`, 'USER');
     return entity;
+  }
+
+  static getRandomName() {
+    const firstNames = ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank'];
+    const lastNames = [
+      'Smith',
+      'Johnson',
+      'Williams',
+      'Brown',
+      'Davis',
+      'Miller',
+    ];
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    return `${firstName} ${lastName}`;
   }
 }

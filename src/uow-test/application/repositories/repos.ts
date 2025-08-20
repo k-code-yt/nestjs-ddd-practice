@@ -17,3 +17,8 @@ export interface IPaymentRepository {
   findById(id: string): Promise<Payment | null>;
   save(payment: Payment): Promise<void>;
 }
+
+export abstract class UserOrderUOW {
+  abstract getUserRepository(): IUserRepository;
+  abstract getOrderRepository(): IOrderRepository;
+}
