@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { BaseCommand } from '../../../shared/application/commands/base.command';
 
-export interface IProcessPaymentCommand {
+export interface IProcessPaymentEvent {
   paymentId: string;
   userId: string;
   amount: number;
@@ -10,7 +10,7 @@ export interface IProcessPaymentCommand {
   correlationId?: string;
 }
 
-export class ProcessPaymentCommand extends BaseCommand {
+export class ProcessPaymentEvent extends BaseCommand {
   constructor(
     public readonly paymentId: string,
     public readonly userId: string,
@@ -29,8 +29,8 @@ export class ProcessPaymentCommand extends BaseCommand {
     userId,
     paymentId,
     correlationId,
-  }: IProcessPaymentCommand): ProcessPaymentCommand {
-    return new ProcessPaymentCommand(
+  }: IProcessPaymentEvent): ProcessPaymentEvent {
+    return new ProcessPaymentEvent(
       paymentId,
       userId,
       amount,

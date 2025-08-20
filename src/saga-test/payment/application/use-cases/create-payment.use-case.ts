@@ -6,10 +6,10 @@ import { PaymentId } from '../../../shared/domain/value-objects/payment-id.vo';
 import { UserId } from '../../../shared/domain/value-objects/user-id.vo';
 import { IPaymentRepo } from '../repositories/payment.repository';
 import { IUserRepo } from '../repositories/user.repository';
-import { MessagingProducer } from '../../../shared/infrastructure/messaging/messaging.interfaces';
 import { Messaging } from '../../../shared/infrastructure/messaging/messaging.config';
-import { ProcessPaymentCommand } from '../commands/payment-processed.command';
 import { IPaymentInput } from '../../domain/entities/payment';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ProcessPaymentEvent } from '../../domain/events/payment-processed.event';
 
 export enum PaymentUserTypeEnum {
   regular = 'regular',
@@ -36,15 +36,13 @@ export class CreatePaymentUseCase {
   constructor(
     private readonly dataAccess: IDataAccess,
     private readonly params: ICreatePaymentUseCaseParams,
-    private readonly msgService: MessagingProducer,
-  ) {}
+    // TODO replace with interface
+    private readonly eventEmitter: EventEmitter2,
+  ) {
+    console.log('📤 UseCase EventEmitter instance:', this.eventEmitter);
+  }
 
   async execute() {
-    // await this.msgService.produce(
-    //   { msg: 'test' },
-    //   Messaging.SagaEventsEnum.OrderPaymentSagaStarted,
-    // );
-
     const permissions = await this.dataAccess.userRepo.getPermissions(
       UserId.fromString(this.params.userId),
     );
@@ -76,18 +74,17 @@ export class CreatePaymentUseCase {
     payment.post();
 
     await this.dataAccess.paymRepo.save(payment);
-    // TODO -> add mapping to needed data
-    // Add saga ID
-    await this.msgService.produce(
-      ProcessPaymentCommand.create({
-        paymentId: payment.id.value,
-        amount: payment.paymentAmount?.amount || 0,
-        currency: 'USD',
-        userId: payment.userId.value,
-      }),
+
+    const paymCreateEvent = ProcessPaymentEvent.create({
+      paymentId: payment.id.value,
+      amount: payment.paymentAmount?.amount || 0,
+      currency: 'USD',
+      userId: payment.userId.value,
+    });
+    this.eventEmitter.emit(
       Messaging.PaymentEventsEnum.PaymentProcessed,
+      paymCreateEvent,
     );
-    // TODO -> add mapper here -> for presenter layer
     return payment;
   }
 }

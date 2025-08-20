@@ -8,6 +8,16 @@
       "name": "uow_test",
       "database": "uow_test",
       "username": "user"
+    },
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "askForPassword": true,
+      "driver": "PostgreSQL",
+      "name": "saga_test",
+      "database": "saga_test",
+      "username": "user"
     }
   ]
 }

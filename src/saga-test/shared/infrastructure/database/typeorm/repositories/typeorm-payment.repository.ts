@@ -4,7 +4,6 @@ import { InjectEntityManager } from '@nestjs/typeorm';
 import { IPaymentRepo } from '../../../../../payment/application/repositories/payment.repository';
 import {
   ICalculationPolicy,
-  IPaymentInput,
   IPaymentProps,
   Payment,
   PaymentStatusEnum,

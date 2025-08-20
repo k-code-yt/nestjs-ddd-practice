@@ -120,12 +120,20 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
         ),
       };
 
-      // Execute handler
       await handler(messageData, metadata);
 
       this.logger.log(
         `Processed event: ${eventType} | Topic: ${topic} | Domain: ${this.domainOptions.domain} | Offset: ${message.offset}`,
       );
+      const offset = (parseInt(message.offset) + 1).toString();
+      await this.consumer.commitOffsets([
+        {
+          topic,
+          partition,
+          offset,
+        },
+      ]);
+      this.logger.log(`Committed to kafka topic: ${topic}, offset: ${offset}`);
     } catch (error) {
       this.logger.error(
         `Error processing message | Topic: ${topic} | Partition: ${partition} | Offset: ${message.offset} | Domain: ${this.domainOptions.domain} | Error: ${error.message}`,

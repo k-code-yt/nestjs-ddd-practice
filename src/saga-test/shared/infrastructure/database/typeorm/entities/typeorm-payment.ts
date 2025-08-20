@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { TypeOrmUser } from './typeorm-user';
 import { PaymentStatusEnum } from '../../../../../payment/domain/entities/payment';
+import { TypeOrmOrder } from './typeorm-order.entity';
 
 @Entity('payments')
 export class TypeOrmPayment {
@@ -43,4 +44,8 @@ export class TypeOrmPayment {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => TypeOrmOrder, (order) => order.payments)
+  @JoinColumn({ name: 'orderId' })
+  order: TypeOrmOrder[];
 }

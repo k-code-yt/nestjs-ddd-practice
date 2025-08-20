@@ -1,26 +1,27 @@
-import { Controller, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  Controller,
+  Logger,
+  OnApplicationBootstrap,
+  OnModuleInit,
+} from '@nestjs/common';
 import { CreatePaymentUseCase } from '../application/use-cases/create-payment.use-case';
 import { IPaymentRepo } from '../application/repositories/payment.repository';
 import { IUserRepo } from '../application/repositories/user.repository';
 import { MessagingProducer } from '../../shared/infrastructure/messaging/messaging.interfaces';
-import { OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { Messaging } from '../../shared/infrastructure/messaging/messaging.config';
 
-// TODOs
-// test consumer
-// add handler that will emmit events
-// where to publish/consumer from -> infra -> emmit event -> tranport
-
 @Controller()
-export class PaymentController implements OnModuleInit {
+export class PaymentController implements OnApplicationBootstrap {
   constructor(
     // TODO -> remove from here
     private readonly paymRepo: IPaymentRepo,
     private readonly userRepo: IUserRepo,
     private readonly msgProducer: MessagingProducer,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async onModuleInit() {
+  async onApplicationBootstrap() {
     await this.create();
   }
 
@@ -34,13 +35,8 @@ export class PaymentController implements OnModuleInit {
         chargeAmount: 100,
         userId: '550e8400-e29b-41d4-a716-446655440001',
       },
-      this.msgProducer,
+      this.eventEmitter,
     );
     await uc.execute();
-  }
-
-  @OnEvent(Messaging.PaymentEventsEnum.PaymentProcessed)
-  handleOrderCreatedEvent(payload: any) {
-    Logger.log(payload);
   }
 }

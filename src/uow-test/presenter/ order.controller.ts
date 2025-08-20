@@ -36,7 +36,7 @@ export class OrderController {
       this.payment(userId, 'order-005'), // maybe
       this.payment('user-003', 'order-004'), // success
     ];
-    await Promise.all(proms);
+    // await Promise.all(proms);
   }
 
   @Post(':id/transfer-ownership')

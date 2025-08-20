@@ -9,6 +9,7 @@ import {
 import { TypeOrmPayment } from './typeorm-payment';
 import { TypeOrmPermission } from './typeorm-permission';
 import { UserTypeEnum } from '../../../../../user/domain/entities/user';
+import { TypeOrmOrder } from './typeorm-order.entity';
 
 @Entity('users')
 export class TypeOrmUser {
@@ -50,4 +51,7 @@ export class TypeOrmUser {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => TypeOrmOrder, (order) => order.user)
+  orders: TypeOrmOrder[];
 }

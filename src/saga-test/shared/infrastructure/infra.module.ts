@@ -3,6 +3,7 @@ import { KafkaCoreModule } from './messaging/kafka/kafka-core.module';
 import { Messaging } from './messaging/messaging.config';
 import { InfraModuleBootstrapOptions } from '../interfaces/infra-bootsrap-options.interface';
 import { DBModule } from './database/typeorm/database.module';
+import { EventHandlerModuler } from './event-handlers/event-handlers.module';
 
 @Global()
 @Module({})
@@ -13,13 +14,12 @@ export class InfraModule {
         ? [KafkaCoreModule.forRoot()]
         : [];
 
-    const modules = [...dynamicModules, DBModule];
+    const modules = [...dynamicModules, DBModule, EventHandlerModuler];
 
     return {
       module: InfraModule,
       imports: modules,
       exports: modules,
-      providers: [],
     };
   }
 }
