@@ -23,7 +23,12 @@ export class TransferOrderOwnershipUseCase {
     order.userId = newUserId;
     newOwner.addOrder(order);
 
-    await orderRepo.save(order);
     await userRepo.save(newOwner);
+    await new Promise((res) => {
+      setTimeout(() => {
+        res(true);
+      }, 2000);
+    });
+    await orderRepo.save(order);
   }
 }

@@ -19,7 +19,8 @@ export class UserOrderStateMachineUnitOfWork implements UserOrderUOW {
   private commitScheduled = false;
   private transactionId = uuid();
   private initializationPromise: Promise<void> | null = null;
-
+  private expectedWrites: number = 2;
+  private completedWrites: number = 0;
   constructor(
     private dataSource: DataSource,
     private options: {
@@ -126,12 +127,10 @@ export class UserOrderStateMachineUnitOfWork implements UserOrderUOW {
     isWrite: boolean,
     promise: Promise<any>,
   ): Promise<any> {
-    const operationId = uuid();
-
     if (this.state === TransactionState.ACTIVE) {
       this.transitionTo(TransactionState.TRACKING);
     }
-
+    const operationId = uuid();
     const operation: OperationRecord = {
       id: operationId,
       repository,
@@ -144,21 +143,27 @@ export class UserOrderStateMachineUnitOfWork implements UserOrderUOW {
 
     this.operations.set(operationId, operation);
 
-    // Wrap the promise to track completion
     const trackedPromise = promise
       .then((result) => {
         operation.status = 'completed';
         operation.completedAt = new Date();
+        // this.onOperationComplete(operationId);
         return result;
       })
       .catch((error) => {
         operation.status = 'failed';
         operation.error = error;
         operation.completedAt = new Date();
+        // this.onOperationComplete(operationId);
         throw error;
       })
       .finally(() => {
-        this.onOperationComplete(operationId);
+        if (operation.type === 'write') {
+          this.completedWrites++;
+        }
+        if (this.completedWrites === this.expectedWrites) {
+          this.checkForAutoCommit();
+        }
       });
 
     return trackedPromise;
@@ -202,7 +207,7 @@ export class UserOrderStateMachineUnitOfWork implements UserOrderUOW {
     const pendingOps = this.getPendingOperations();
 
     if (pendingOps.length > 0) {
-      this.scheduleCommitCheck();
+      //   this.scheduleCommitCheck();
       return;
     }
 
@@ -213,8 +218,7 @@ export class UserOrderStateMachineUnitOfWork implements UserOrderUOW {
     } else if (this.hasWriteOperations()) {
       await this.commit();
     } else {
-      // Only read operations, just release
-      await this.release();
+      //   await this.release();
     }
   }
 

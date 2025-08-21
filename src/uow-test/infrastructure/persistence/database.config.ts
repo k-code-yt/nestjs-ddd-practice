@@ -13,4 +13,5 @@ export const databaseConfig: TypeOrmModuleOptions = {
   entities: [UserTypeOrmEntity, OrderTypeOrmEntity, PaymentTypeOrmEntity],
   synchronize: true,
   logging: true,
+  connectTimeoutMS: 30000,
 };

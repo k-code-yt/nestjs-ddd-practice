@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 const requests = [
   transferOwnership('order-001', 'user-002'),
-  transferOwnership('order-002', 'user-002'),
+  transferOwnership('order-002', 'user-001'),
   //   transferOwnership('order-004', 'user-002'),
   //   transferOwnership('order-005', 'user-002'),
 ];
