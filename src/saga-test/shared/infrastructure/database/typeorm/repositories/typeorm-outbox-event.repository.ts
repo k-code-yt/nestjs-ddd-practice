@@ -16,6 +16,7 @@ export class TypeOrmOutboxEventRepository {
   ) {}
 
   async createEvent(
+    eventId: string,
     aggregateId: string,
     aggregateType: AggregateTypeEnum,
     eventType: SagaEvents,
@@ -25,6 +26,7 @@ export class TypeOrmOutboxEventRepository {
   ): Promise<TypeOrmOutboxEventEntity> {
     const payload: TypeOrmOutboxEventEntity = new TypeOrmOutboxEventEntity();
 
+    payload.id = eventId;
     payload.aggregateId = aggregateId;
     payload.aggregateType = aggregateType;
     payload.eventType = eventType;
@@ -41,6 +43,16 @@ export class TypeOrmOutboxEventRepository {
     const event = this.repository.create(payload);
 
     return await this.repository.save(event);
+  }
+
+  async findByCorrelationId(
+    correlationId: string,
+  ): Promise<TypeOrmOutboxEventEntity | null> {
+    return await this.repository.findOne({
+      where: { correlationId },
+      relations: { saga: true },
+      select: { id: true, saga: { id: true } },
+    });
   }
 
   async findUnpublishedEvents(

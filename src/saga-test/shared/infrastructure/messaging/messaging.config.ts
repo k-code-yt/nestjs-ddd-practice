@@ -17,7 +17,7 @@ export namespace Messaging {
   // Order Domain Events
   export enum OrderEventsEnum {
     OrderCreated = 'order.created',
-    OrderConfirmed = 'order.confirmed',
+    OrderConfirmRequest = 'order.confirm-request',
     OrderCancelled = 'order.cancelled',
     OrderCompleted = 'order.completed',
     OrderFailed = 'order.failed',
@@ -105,20 +105,18 @@ export namespace Messaging {
           // Order domain consumes payment events for saga coordination
           PaymentEventsEnum.PaymentProcessed,
           PaymentEventsEnum.PaymentFailed,
-          // Order domain consumes saga events
-          SagaEventsEnum.OrderPaymentSagaStarted,
-          SagaEventsEnum.OrderPaymentSagaCompleted,
-          SagaEventsEnum.OrderPaymentSagaFailed,
+          //  ---FOR ORCHESTRATOR SAGA
+          //   // Order domain consumes saga events
+          //   SagaEventsEnum.OrderPaymentSagaStarted,
+          //   SagaEventsEnum.OrderPaymentSagaCompleted,
+          //   SagaEventsEnum.OrderPaymentSagaFailed,
         ],
         payment: [
-          // ----FOR TESTING
-          PaymentEventsEnum.PaymentProcessed,
-          PaymentEventsEnum.PaymentFailed,
-          // ----
           OrderEventsEnum.OrderCreated,
           OrderEventsEnum.OrderCancelled,
-          // Payment domain consumes saga events
-          SagaEventsEnum.OrderPaymentSagaStarted,
+          //  ---FOR ORCHESTRATOR SAGA
+          //   // Payment domain consumes saga events
+          //   SagaEventsEnum.OrderPaymentSagaStarted,
         ],
         user: [
           // User domain produces these
@@ -130,7 +128,7 @@ export namespace Messaging {
           PaymentEventsEnum.PaymentFailed,
         ],
         saga: [
-          //   // Saga orchestrator consumes all relevant events
+          //  ---FOR ORCHESTRATOR SAGA
           //   ...Object.values(OrderEventsEnum),
           //   ...Object.values(PaymentEventsEnum),
           //   // Saga orchestrator produces saga events

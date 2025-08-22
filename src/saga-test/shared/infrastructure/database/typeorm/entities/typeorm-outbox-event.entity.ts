@@ -1,15 +1,15 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   ManyToOne,
+  PrimaryColumn,
 } from 'typeorm';
 import { TypeOrmChoreographySagaEntity } from './typeorm-saga';
 
 @Entity('outbox_events')
 export class TypeOrmOutboxEventEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   id: string;
 
   @Column({ type: 'varchar', length: 255 })

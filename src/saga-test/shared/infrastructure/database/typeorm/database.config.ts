@@ -24,5 +24,5 @@ export const databaseConfig: TypeOrmModuleOptions = {
     TypeOrmOrder,
   ],
   synchronize: true,
-  logging: true,
+  //   logging: true,
 };

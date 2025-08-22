@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { InfraModule } from './saga-test/shared/infrastructure/infra.module';
-import { PaymentMessageModule } from './saga-test/payment/infra/payment-messaging.module';
 import { Messaging } from './saga-test/shared/infrastructure/messaging/messaging.config';
-import { PaymentController } from './saga-test/payment/presenter/payment.controller';
+import { EventPaymentTransport } from './saga-test/payment/interface-adapters/transport/event-payment.transport';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { OrderController } from './uow-test/presenter/ order.controller';
-import { InfrastructureModule } from './uow-test/infrastructure/persistence/database.module';
-import { EventHandlerModuler } from './saga-test/shared/infrastructure/event-handlers/event-handlers.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PaymentMessageModule } from './saga-test/payment/infra/messaging/payment-messaging.module';
+import { OrderMessageModule } from './saga-test/order/infra/messaging/order-messaging.module';
+import { HTTPOrderTransport } from './saga-test/order/interface-adapters/transport/http-order.controller';
+import { EventOrderTransport } from './saga-test/order/interface-adapters/transport/event-order.controller';
 
 const msgDriver = Messaging.MessageDriverTypeEnum.kafka;
 
@@ -15,26 +15,28 @@ const msgDriver = Messaging.MessageDriverTypeEnum.kafka;
 // // TODO -> must be within paymModule
 const domainInfraModules = [
   PaymentMessageModule.forRoot({ messagingDriver: msgDriver }),
+  OrderMessageModule.forRoot({ messagingDriver: msgDriver }),
 ];
 
-// @Module({
-//   imports: [
-//     EventEmitterModule.forRoot({ global: true }),
-//     ScheduleModule.forRoot(),
-//     InfraModule.forRoot({
-//       messagingDriver: msgDriver,
-//     }),
-//     ...domainInfraModules,
-//   ],
-//   controllers: [PaymentController],
-//   providers: [],
-// })
-// export class AppModule {}
-
-// For UOW testing
 @Module({
-  imports: [InfrastructureModule],
-  controllers: [OrderController],
+  imports: [
+    EventEmitterModule.forRoot({ global: true }),
+    ScheduleModule.forRoot(),
+    InfraModule.forRoot({
+      messagingDriver: msgDriver,
+    }),
+    ...domainInfraModules,
+  ],
+  //   TODO -> add propper module for these
+  controllers: [EventPaymentTransport, HTTPOrderTransport, EventOrderTransport],
   providers: [],
 })
 export class AppModule {}
+
+// For UOW testing
+// @Module({
+//   imports: [InfrastructureModule],
+//   controllers: [OrderController],
+//   providers: [],
+// })
+// export class AppModule {}

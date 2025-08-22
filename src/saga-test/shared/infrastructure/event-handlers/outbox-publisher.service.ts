@@ -71,20 +71,18 @@ export class OutboxPublisherService {
 
       if (!currentEvent) {
         await queryRunner.commitTransaction();
-        return; // Already published by another instance
+        return;
       }
 
-      // Publish to Kafka
       await this.msgService.produce(
         event.eventData,
         event.eventType as Messaging.AllDomainEvents,
       );
 
-      // Mark as published in database
       await queryRunner.manager.update(TypeOrmOutboxEventEntity, event.id, {
         published: true,
         publishedAt: new Date(),
-        errorMessage: null, // Clear any previous errors
+        errorMessage: null,
       });
 
       await queryRunner.commitTransaction();

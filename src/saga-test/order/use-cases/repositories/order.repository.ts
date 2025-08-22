@@ -1,5 +1,5 @@
-import { OrderId } from '../../shared/domain/value-objects/order-id.vo';
-import { Order } from '../domain/order.entity';
+import { OrderId } from '../../../shared/domain/value-objects/order-id.vo';
+import { Order } from '../../domain/order.entity';
 
 export abstract class IOrderRepo {
   abstract save(order: Order): Promise<void>;

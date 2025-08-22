@@ -1,10 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { MessagingConsumer } from '../../shared/infrastructure/messaging/messaging.interfaces';
-import { Messaging } from '../../shared/infrastructure/messaging/messaging.config';
+import { MessagingConsumer } from '../../../shared/infrastructure/messaging/messaging.interfaces';
+import { Messaging } from '../../../shared/infrastructure/messaging/messaging.config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { PaymentProcessedEvent } from '../../domain/events/payment-processed.event';
 
 @Injectable()
-export class PaymentMessagingService implements OnModuleInit {
+export class OrderMessagingService implements OnModuleInit {
   constructor(
     private readonly consumer: MessagingConsumer,
     private readonly eventEmitter: EventEmitter2,
@@ -27,10 +28,10 @@ export class PaymentMessagingService implements OnModuleInit {
   }
 
   private async paymentProcessedHandler(
-    msg: any,
+    msg: PaymentProcessedEvent,
     metadata: any,
   ): Promise<void> {
-    this.eventEmitter.emit(Messaging.PaymentEventsEnum.PaymentProcessed, {
+    this.eventEmitter.emit(Messaging.OrderEventsEnum.OrderConfirmRequest, {
       msg,
       metadata,
     });

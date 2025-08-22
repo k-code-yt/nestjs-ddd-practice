@@ -21,6 +21,7 @@ export class UserOrderStateMachineUnitOfWork implements UserOrderUOW {
   private initializationPromise: Promise<void> | null = null;
   private expectedWrites: number = 2;
   private completedWrites: number = 0;
+
   constructor(
     private dataSource: DataSource,
     private options: {

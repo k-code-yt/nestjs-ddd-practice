@@ -20,6 +20,7 @@ import {
   AmountSpecification,
   StatusSpecification,
 } from '../../../../../payment/domain/specifications/payment.specifications';
+import { OrderId } from '../../../../domain/value-objects/order-id.vo';
 
 @Injectable()
 export class TypeOrmPaymentRepository implements IPaymentRepo {
@@ -76,6 +77,7 @@ export class TypeOrmPaymentRepository implements IPaymentRepo {
     const params: IPaymentProps = {
       id: PaymentId.fromString(typeOrmPayment.id),
       userId: UserId.fromString(typeOrmPayment.user.id),
+      orderId: OrderId.fromString(typeOrmPayment.order.id),
       chargeAmount: new Money(typeOrmPayment.chargeAmount),
       paymentAmount: typeOrmPayment.paymentAmount
         ? new Money(typeOrmPayment.paymentAmount)

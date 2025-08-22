@@ -1,8 +1,8 @@
 import { v4 as uuid } from 'uuid';
-import { OrderStatus } from '../domain/order.entity';
-import { BaseCommand } from '../../shared/application/commands/base.command';
+import { OrderStatus } from '../order.entity';
+import { BaseCommand } from '../../../shared/application/commands/base.command';
 
-export interface IOrderPaymentEvent {
+export interface IOrderCreatedEvent {
   orderId: string;
   description?: string;
   amount: number;
@@ -12,7 +12,7 @@ export interface IOrderPaymentEvent {
   correlationId?: string;
 }
 
-export class OrderPaymentEvent extends BaseCommand {
+export class OrderCreatedEvent extends BaseCommand {
   constructor(
     public readonly orderId: string,
     public readonly description: string | undefined,
@@ -33,8 +33,8 @@ export class OrderPaymentEvent extends BaseCommand {
     status,
     sagaId,
     correlationId,
-  }: IOrderPaymentEvent): OrderPaymentEvent {
-    return new OrderPaymentEvent(
+  }: IOrderCreatedEvent): OrderCreatedEvent {
+    return new OrderCreatedEvent(
       orderId,
       description,
       amount,

@@ -17,14 +17,19 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
   constructor(
     private readonly consumer: Consumer,
     private readonly domainOptions: IDomainMessagingOptions,
-  ) {}
+  ) {
+    this.logger.debug(
+      'CONSUMER:CREATED',
+      `Domain: ${domainOptions.domain}, for events: ${domainOptions.eventsToConsume.map((e) => e).join(' | ')}`,
+    );
+  }
 
   async consume(
     event: Messaging.AllDomainEvents,
     handler: (message: any, metadata: MessageMetadata) => Promise<void>,
   ): Promise<void> {
     this.eventHandlers.set(event, handler);
-    this.logger.log(
+    this.logger.debug(
       `Handler registered for event: ${event} in domain: ${this.domainOptions.domain}`,
     );
   }
@@ -62,7 +67,6 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
     if (!this.isRunning) {
       return;
     }
-
     try {
       await this.consumer.disconnect();
       this.isRunning = false;

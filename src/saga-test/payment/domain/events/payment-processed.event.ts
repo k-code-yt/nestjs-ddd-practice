@@ -1,22 +1,24 @@
 import { v4 as uuid } from 'uuid';
 import { BaseCommand } from '../../../shared/application/commands/base.command';
 
-export interface IProcessPaymentEvent {
+export interface IPaymentProcessedEvent {
   paymentId: string;
+  orderId: string;
   userId: string;
   amount: number;
   currency: string;
   sagaId?: string;
-  correlationId?: string;
+  correlationId: string;
 }
 
-export class ProcessPaymentEvent extends BaseCommand {
+export class PaymentProcessedEvent extends BaseCommand {
   constructor(
     public readonly paymentId: string,
     public readonly userId: string,
+    public readonly orderId: string,
     public readonly amount: number,
     public readonly currency: string = 'USD',
-    public readonly sagaId: string,
+    public readonly sagaId?: string,
     correlationId?: string,
   ) {
     super(correlationId);
@@ -28,11 +30,13 @@ export class ProcessPaymentEvent extends BaseCommand {
     sagaId,
     userId,
     paymentId,
+    orderId,
     correlationId,
-  }: IProcessPaymentEvent): ProcessPaymentEvent {
-    return new ProcessPaymentEvent(
+  }: IPaymentProcessedEvent): PaymentProcessedEvent {
+    return new PaymentProcessedEvent(
       paymentId,
       userId,
+      orderId,
       amount,
       currency,
       sagaId || uuid(),

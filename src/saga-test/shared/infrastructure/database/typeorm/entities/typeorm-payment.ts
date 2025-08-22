@@ -47,5 +47,5 @@ export class TypeOrmPayment {
 
   @ManyToOne(() => TypeOrmOrder, (order) => order.payments)
   @JoinColumn({ name: 'orderId' })
-  order: TypeOrmOrder[];
+  order: TypeOrmOrder;
 }

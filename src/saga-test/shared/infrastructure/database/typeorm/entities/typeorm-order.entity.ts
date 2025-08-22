@@ -15,7 +15,7 @@ export class TypeOrmOrder {
   @PrimaryColumn()
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @Column('decimal', { precision: 10, scale: 2 })

@@ -47,9 +47,9 @@ export class TypeOrmSagaRepository {
 
   async updateSagaState(
     sagaId: string,
-    newState: SagaState,
     eventId: string,
     currentEvent: SagaEvents,
+    newState?: SagaState,
     sagaData?: Partial<SagaData>,
   ): Promise<TypeOrmChoreographySagaEntity> {
     return await this.dataSource.transaction(async (manager) => {
@@ -73,7 +73,9 @@ export class TypeOrmSagaRepository {
         return saga; // Already processed
       }
 
-      saga.currentState = newState;
+      if (newState) {
+        saga.currentState = newState;
+      }
       saga.currentEvent = currentEvent;
 
       if (sagaData) {

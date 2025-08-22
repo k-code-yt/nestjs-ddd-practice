@@ -2,6 +2,7 @@ import { ISpecification } from '../../../shared/interfaces/specification.interfa
 import { Money } from '../../../shared/domain/value-objects/money.vo';
 import { UserId } from '../../../shared/domain/value-objects/user-id.vo';
 import { PaymentId } from '../../../shared/domain/value-objects/payment-id.vo';
+import { OrderId } from '../../../shared/domain/value-objects/order-id.vo';
 
 export enum PaymentStatusEnum {
   active = 'active',
@@ -15,30 +16,25 @@ export interface ICalculationPolicy {
   calculatePayment(amount: Money): Money;
 }
 
-export type IPaymentInput = Pick<IPaymentProps, 'chargeAmount' | 'userId'> &
-  Partial<Pick<IPaymentProps, 'id'>>;
-
-export interface IPaymentProps {
-  id: PaymentId;
+export type IPaymentProps = {
+  id?: PaymentId;
   userId: UserId;
+  orderId: OrderId;
   chargeAmount: Money;
-  paymentAmount: Money | undefined;
-  status: PaymentStatusEnum;
-}
+  paymentAmount?: Money | undefined;
+  status?: PaymentStatusEnum;
+};
 
 export interface IPaymentBuilder {
   build(): Payment;
 }
 
 export class Payment {
-  private props: IPaymentProps;
   constructor(
-    private readonly inputParams: IPaymentInput,
+    private readonly props: IPaymentProps,
     private readonly calculationPolicy: ICalculationPolicy,
     private readonly specs: ISpecification<Payment>[],
-  ) {
-    this.props = { ...inputParams } as IPaymentProps;
-  }
+  ) {}
 
   private ensureSpecs(): void {
     if (this.specs?.length > 0) {
@@ -55,14 +51,14 @@ export class Payment {
   private applyCalculationPolicy(): this {
     if (this.calculationPolicy) {
       this.props.paymentAmount = this.calculationPolicy.calculatePayment(
-        this.inputParams.chargeAmount,
+        this.props.chargeAmount,
       );
     }
     return this;
   }
 
   public applyIdIfMissing() {
-    if (!this.inputParams.id) {
+    if (!this.props.id) {
       this.props.id = PaymentId.create();
     }
   }
@@ -87,16 +83,12 @@ export class Payment {
     return this.props.paymentAmount as Money;
   }
 
-  get status(): PaymentStatusEnum {
+  get status(): PaymentStatusEnum | undefined {
     return this.props.status;
   }
 
-  set status(status: PaymentStatusEnum) {
-    this.props.status = status;
-  }
-
   get id(): PaymentId {
-    return this.props.id;
+    return this.props.id as PaymentId;
   }
 
   get userId(): UserId {

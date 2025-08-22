@@ -2,16 +2,16 @@ import { ISpecification } from '../../../shared/interfaces/specification.interfa
 import {
   ICalculationPolicy,
   IPaymentBuilder,
-  IPaymentInput,
+  IPaymentProps,
   Payment,
 } from './payment';
 
 export class PaymentBuilder implements IPaymentBuilder {
-  private params: IPaymentInput;
+  private params: IPaymentProps;
   private calculationPolicy: ICalculationPolicy;
   private specs: ISpecification<Payment>[];
 
-  withParams(p: IPaymentInput) {
+  withParams(p: IPaymentProps) {
     this.params = p;
     return this;
   }
