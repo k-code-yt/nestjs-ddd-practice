@@ -16,7 +16,11 @@ import { TypeOrmOutboxEventRepository } from './repositories/typeorm-outbox-even
 import { TypeOrmOrderRepository } from './repositories/typeorm-order.repository';
 import { TypeOrmOrder } from './entities/typeorm-order.entity';
 import { CreateOrderDataAccess } from '../../../../order/use-cases/create-order.use-case';
-import { IOrderRepo } from '../../../../order/use-cases/repositories/order.repository';
+import {
+  IOrderRepo,
+  IUpdateOrderRepo,
+} from '../../../../order/use-cases/repositories/order.repository';
+import { UpdateOrderDataAccess } from '../../../../order/use-cases/update-order.use-case';
 
 @Module({
   imports: [
@@ -45,6 +49,10 @@ import { IOrderRepo } from '../../../../order/use-cases/repositories/order.repos
       useClass: TypeOrmOrderRepository,
     },
     {
+      provide: IUpdateOrderRepo,
+      useClass: TypeOrmOrderRepository,
+    },
+    {
       provide: CreateOrderDataAccess,
       useFactory: (orderRepo: IOrderRepo) => {
         const provider: CreateOrderDataAccess = {
@@ -54,6 +62,16 @@ import { IOrderRepo } from '../../../../order/use-cases/repositories/order.repos
       },
       inject: [IOrderRepo],
     },
+    {
+      provide: UpdateOrderDataAccess,
+      useFactory: (orderRepo: IUpdateOrderRepo) => {
+        const provider: UpdateOrderDataAccess = {
+          orderRepo,
+        };
+        return provider;
+      },
+      inject: [IUpdateOrderRepo],
+    },
     TypeOrmSagaRepository,
     TypeOrmOrderRepository,
     TypeOrmOutboxEventRepository,
@@ -62,10 +80,12 @@ import { IOrderRepo } from '../../../../order/use-cases/repositories/order.repos
     IPaymentRepo,
     IUserRepo,
     IOrderRepo,
+    IUpdateOrderRepo,
     TypeOrmSagaRepository,
     TypeOrmOutboxEventRepository,
     TypeOrmOrderRepository,
     CreateOrderDataAccess,
+    UpdateOrderDataAccess,
   ],
 })
 export class DBModule {}

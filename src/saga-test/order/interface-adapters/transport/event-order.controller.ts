@@ -1,13 +1,16 @@
-import { Controller, Logger } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { Messaging } from '../../../shared/infrastructure/messaging/messaging.config';
-import { CreateOrderDataAccess } from '../../use-cases/create-order.use-case';
 import { PaymentProcessedEvent } from '../../domain/events/payment-processed.event';
+import {
+  UpdateOrderDataAccess,
+  UpdateOrderUseCase,
+} from '../../use-cases/update-order.use-case';
 
 @Controller()
 export class EventOrderTransport {
   constructor(
-    private readonly createDataAccess: CreateOrderDataAccess,
+    private readonly updateDataAccess: UpdateOrderDataAccess,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
@@ -16,6 +19,17 @@ export class EventOrderTransport {
     msg: PaymentProcessedEvent;
     metadata: any;
   }): Promise<void> {
-    Logger.log(`RECIVED: ${data}`, 'ORDER:CONTROLLER');
+    const uc = new UpdateOrderUseCase(
+      this.updateDataAccess,
+      {
+        id: data.msg.orderId,
+        paymentId: data.msg.paymentId,
+        userId: data.msg.userId,
+        correlationId: data.msg.correlationId,
+      },
+      this.eventEmitter,
+    );
+
+    await uc.execute();
   }
 }

@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   PrimaryColumn,
+  JoinColumn,
 } from 'typeorm';
 import { TypeOrmChoreographySagaEntity } from './typeorm-saga';
 
@@ -27,10 +28,10 @@ export class TypeOrmOutboxEventEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   correlationId: string; // For tracing
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
   @ManyToOne(() => TypeOrmChoreographySagaEntity, (saga) => saga.events, {
     onDelete: 'SET NULL',
   })
+  @JoinColumn()
   saga: TypeOrmChoreographySagaEntity;
 
   @Column({ type: 'boolean', default: false })

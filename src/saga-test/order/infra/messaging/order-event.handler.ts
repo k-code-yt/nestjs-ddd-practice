@@ -8,6 +8,7 @@ import { AggregateTypeEnum } from '../../../shared/enums/aggregate-type.enum';
 import { SagaState } from '../../../shared/infrastructure/database/typeorm/entities/typeorm-saga';
 import { OrderCreatedEvent } from '../../domain/events/order-created.event';
 import { SagaTypeEnum } from '../../../shared/enums/saga-state.enum';
+import { OrderConfirmedEvent } from '../../domain/events/order-confirmed.event';
 
 @Injectable()
 export class OrderEventHandler {
@@ -20,7 +21,7 @@ export class OrderEventHandler {
 
   //  TODO -> add transaction
   @OnEvent(Messaging.OrderEventsEnum.OrderCreated)
-  async handleOrderProcessed(data: OrderCreatedEvent) {
+  async handleOrderCreated(data: OrderCreatedEvent) {
     const sagaId = data.sagaId || uuid();
 
     await this.sagaRepo.createSaga(
@@ -39,6 +40,26 @@ export class OrderEventHandler {
       data,
       data.correlationId,
       sagaId,
+    );
+  }
+
+  @OnEvent(Messaging.OrderEventsEnum.OrderConfirmed)
+  async handleOrderConfirmed(data: OrderConfirmedEvent) {
+    const prevEvent = await this.outboxRepo.findByCorrelationId(
+      data.correlationId,
+    );
+    const sagaId = prevEvent?.saga.id;
+    if (!sagaId) {
+      // TODO -> addd error handling here
+      // only dev error here, should never happen
+      return;
+    }
+    await this.sagaRepo.updateSagaState(
+      sagaId,
+      data.eventId,
+      Messaging.OrderEventsEnum.OrderConfirmed,
+      SagaState.Completed,
+      data,
     );
   }
 }

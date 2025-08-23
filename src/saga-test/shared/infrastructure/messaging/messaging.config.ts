@@ -18,6 +18,7 @@ export namespace Messaging {
   export enum OrderEventsEnum {
     OrderCreated = 'order.created',
     OrderConfirmRequest = 'order.confirm-request',
+    OrderConfirmed = 'order.confirmed',
     OrderCancelled = 'order.cancelled',
     OrderCompleted = 'order.completed',
     OrderFailed = 'order.failed',

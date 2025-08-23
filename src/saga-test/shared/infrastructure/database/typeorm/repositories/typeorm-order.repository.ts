@@ -6,8 +6,12 @@ import { UserId } from '../../../../domain/value-objects/user-id.vo';
 import { OrderId } from '../../../../domain/value-objects/order-id.vo';
 import { TypeOrmUser } from '../entities/typeorm-user';
 import { Money } from '../../../../domain/value-objects/money.vo';
+import {
+  IOrderRepo,
+  IUpdateOrderRepo,
+} from '../../../../../order/use-cases/repositories/order.repository';
 
-export class TypeOrmOrderRepository {
+export class TypeOrmOrderRepository implements IOrderRepo, IUpdateOrderRepo {
   private repo: Repository<TypeOrmOrder>;
   constructor(
     @InjectEntityManager()
@@ -16,9 +20,9 @@ export class TypeOrmOrderRepository {
     this.repo = em.connection.getRepository(TypeOrmOrder);
   }
 
-  async findById(id: string): Promise<Order | null> {
+  async findById(id: OrderId): Promise<Order | null> {
     const entity = await this.repo.findOne({
-      where: { id },
+      where: { id: id.value },
       relations: ['user'],
     });
     return entity && this.toDomain(entity);
@@ -29,10 +33,21 @@ export class TypeOrmOrderRepository {
     await this.repo.save(entity);
   }
 
+  async update(order: Order): Promise<void> {
+    const entity = this.repo.create(this.toTypeOrm(order));
+    await this.repo.update(entity.id, entity);
+  }
+
   private toTypeOrm(domain: Order): TypeOrmOrder {
     const entity = new TypeOrmOrder();
     entity.id = domain.id.value;
-    entity.amount = domain.amount.amount;
+    if (domain.status) {
+      entity.status = domain.status;
+    }
+
+    if (domain?.amount?.amount) {
+      entity.amount = domain.amount.amount;
+    }
 
     if (domain.userId) {
       entity.user = new TypeOrmUser();

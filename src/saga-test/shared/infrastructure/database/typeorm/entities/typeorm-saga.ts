@@ -56,7 +56,6 @@ export class TypeOrmChoreographySagaEntity {
   @VersionColumn()
   version: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
   @OneToMany(() => TypeOrmOutboxEventEntity, (event) => event.saga, {
     onDelete: 'CASCADE',
   })

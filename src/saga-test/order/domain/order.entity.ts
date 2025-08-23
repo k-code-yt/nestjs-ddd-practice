@@ -1,5 +1,6 @@
 import { Money } from '../../shared/domain/value-objects/money.vo';
 import { OrderId } from '../../shared/domain/value-objects/order-id.vo';
+import { PaymentId } from '../../shared/domain/value-objects/payment-id.vo';
 import { UserId } from '../../shared/domain/value-objects/user-id.vo';
 
 export enum OrderStatus {
@@ -13,8 +14,9 @@ export enum OrderStatus {
 export type OrderData = {
   id?: OrderId;
   description?: string;
-  amount: Money;
-  userId: UserId;
+  amount?: Money;
+  userId?: UserId;
+  paymentId?: PaymentId;
   status?: OrderStatus;
 };
 
@@ -24,6 +26,10 @@ export class Order {
   public post() {
     this.applyId();
     this.orderData.status = OrderStatus.Created;
+  }
+
+  public update() {
+    this.orderData.status = OrderStatus.Confirmed;
   }
 
   private applyId() {
@@ -45,10 +51,14 @@ export class Order {
   }
 
   get amount(): Money {
-    return this.orderData.amount;
+    return this.orderData.amount as Money;
   }
 
   get userId(): UserId {
-    return this.orderData.userId;
+    return this.orderData.userId as UserId;
+  }
+
+  get paymentId(): PaymentId {
+    return this.orderData.paymentId as PaymentId;
   }
 }

@@ -94,4 +94,8 @@ export class Payment {
   get userId(): UserId {
     return this.props.userId;
   }
+
+  get orderId(): OrderId {
+    return this.props.orderId;
+  }
 }

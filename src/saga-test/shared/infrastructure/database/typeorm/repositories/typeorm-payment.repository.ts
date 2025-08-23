@@ -21,6 +21,7 @@ import {
   StatusSpecification,
 } from '../../../../../payment/domain/specifications/payment.specifications';
 import { OrderId } from '../../../../domain/value-objects/order-id.vo';
+import { TypeOrmOrder } from '../entities/typeorm-order.entity';
 
 @Injectable()
 export class TypeOrmPaymentRepository implements IPaymentRepo {
@@ -65,6 +66,11 @@ export class TypeOrmPaymentRepository implements IPaymentRepo {
     typeOrmPayment.id = payment.id.value;
     typeOrmPayment.user = new TypeOrmUser();
     typeOrmPayment.user.id = payment.userId.value;
+
+    if (payment?.orderId) {
+      typeOrmPayment.order = new TypeOrmOrder();
+      typeOrmPayment.order.id = payment.orderId.value;
+    }
 
     typeOrmPayment.chargeAmount = payment.chargeAmount.cents;
     typeOrmPayment.paymentAmount = payment.paymentAmount?.cents || 0;
