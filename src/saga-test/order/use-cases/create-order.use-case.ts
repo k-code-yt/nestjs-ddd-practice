@@ -34,18 +34,19 @@ export class CreateOrderUseCase {
 
     await this.dataAccess.orderRepo.save(order);
 
-    const orderCreateEvent = OrderCreatedEvent.create({
-      amount: order.amount.amount,
-      description: order.description,
-      orderId: order.id.value,
-      status: order.status,
-      userId: order.userId.value,
-    });
+    // ----------FOR OUTBOX PATTERN
+    // const orderCreateEvent = OrderCreatedEvent.create({
+    //   amount: order.amount.amount,
+    //   description: order.description,
+    //   orderId: order.id.value,
+    //   status: order.status,
+    //   userId: order.userId.value,
+    // });
 
-    this.eventEmitter.emit(
-      Messaging.OrderEventsEnum.OrderCreated,
-      orderCreateEvent,
-    );
+    // this.eventEmitter.emit(
+    //   Messaging.OrderEventsEnum.OrderCreated,
+    //   orderCreateEvent,
+    // );
     return order;
   }
 }

@@ -5,6 +5,8 @@ export interface IDomainMessagingOptions {
   domain: DomainNameEnum;
   consumerGroupPrefix: string;
   eventsToConsume: Messaging.AllDomainEvents[];
+  injectionToken: string | symbol;
+  fromBeginning?: boolean;
 }
 
 export interface MessageMetadata {

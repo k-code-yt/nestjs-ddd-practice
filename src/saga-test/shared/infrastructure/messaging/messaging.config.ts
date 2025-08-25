@@ -3,7 +3,8 @@ export namespace Messaging {
     | OrderEventsEnum
     | PaymentEventsEnum
     | UserEventsEnum
-    | SagaEventsEnum;
+    | SagaEventsEnum
+    | DBStreamingEventsEnum;
 
   export interface DomainTopicConfig {
     events: AllDomainEvents[];
@@ -43,6 +44,16 @@ export namespace Messaging {
     OrderPaymentSagaCompleted = 'saga.order-payment.completed',
     OrderPaymentSagaFailed = 'saga.order-payment.failed',
     OrderPaymentSagaCompensated = 'saga.order-payment.compensated',
+  }
+
+  // DBStreamingEvents
+  export enum DBStreamingEventsEnum {
+    Orders = 'orders',
+    Payments = 'payments',
+  }
+
+  export enum InternalEventsEnum {
+    EventCompleted = 'event-compeleted',
   }
 
   export class Config {
@@ -140,8 +151,16 @@ export namespace Messaging {
       return domainEventMap[domain] || [];
     }
 
+    public static getDBStreamEvents(domain: string): DBStreamingEventsEnum[] {
+      const streamingEventMap: Record<string, DBStreamingEventsEnum[]> = {
+        order: [DBStreamingEventsEnum.Orders],
+        payment: [DBStreamingEventsEnum.Payments],
+      };
+      return streamingEventMap[domain] || [];
+    }
+
     public static getTopicName(event: AllDomainEvents): string {
-      return `${process.env.SERVICE_NAME || 'monolith'}.${event}`;
+      return event;
     }
   }
 }

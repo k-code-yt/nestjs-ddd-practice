@@ -11,7 +11,7 @@ import { SagaTypeEnum } from '../../../shared/enums/saga-state.enum';
 import { OrderConfirmedEvent } from '../../domain/events/order-confirmed.event';
 
 @Injectable()
-export class OrderEventHandler {
+export class OutboxOrderEventHandler {
   constructor(
     // TODO -> add abstractions
     private readonly sagaRepo: TypeOrmSagaRepository,

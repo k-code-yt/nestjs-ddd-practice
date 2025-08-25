@@ -51,4 +51,7 @@ export class TypeOrmOutboxEventEntity {
 
   @Column({ type: 'text', nullable: true })
   errorMessage: string | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  metadata: any;
 }

@@ -1,11 +1,17 @@
 import { OnApplicationShutdown, Logger, Inject } from '@nestjs/common';
-import { Consumer, EachMessagePayload } from 'kafkajs';
+import {
+  Consumer,
+  EachMessagePayload,
+  KafkaMessage,
+  TopicPartitionOffset,
+} from 'kafkajs';
 import { Messaging } from '../messaging.config';
 import {
   MessagingConsumer,
   MessageMetadata,
   IDomainMessagingOptions,
 } from '../messaging.interfaces';
+import { OnEvent } from '@nestjs/event-emitter';
 
 export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
   private readonly logger = new Logger(KafkaConsumer.name);
@@ -90,9 +96,9 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
     const { topic, partition, message } = payload;
 
     try {
-      const eventType = message.headers?.['event-type']?.toString();
+      const eventType = message.headers?.['event-type']?.toString() || topic;
 
-      if (!eventType || !message.value) {
+      if (!eventType || !message.value?.length) {
         this.logger.warn(
           `Invalid message received on topic: ${topic} | Domain: ${this.domainOptions.domain}`,
         );
@@ -109,7 +115,7 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
         return;
       }
 
-      const messageData = JSON.parse(message.value.toString());
+      const messageData = message.value && JSON.parse(message.value.toString());
       const metadata: MessageMetadata = {
         topic,
         partition,
@@ -129,15 +135,6 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
       this.logger.log(
         `Processed event: ${eventType} | Topic: ${topic} | Domain: ${this.domainOptions.domain} | Offset: ${message.offset}`,
       );
-      const offset = (parseInt(message.offset) + 1).toString();
-      await this.consumer.commitOffsets([
-        {
-          topic,
-          partition,
-          offset,
-        },
-      ]);
-      this.logger.log(`Committed to kafka topic: ${topic}, offset: ${offset}`);
     } catch (error) {
       this.logger.error(
         `Error processing message | Topic: ${topic} | Partition: ${partition} | Offset: ${message.offset} | Domain: ${this.domainOptions.domain} | Error: ${error.message}`,
@@ -152,5 +149,18 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
   // Utility method to get registered handlers (useful for debugging)
   getRegisteredHandlers(): string[] {
     return Array.from(this.eventHandlers.keys());
+  }
+
+  @OnEvent(Messaging.InternalEventsEnum.EventCompleted)
+  private async commit(payload: TopicPartitionOffset) {
+    const { offset, partition, topic } = payload;
+    await this.consumer.commitOffsets([
+      {
+        topic,
+        partition,
+        offset,
+      },
+    ]);
+    this.logger.debug(`Committed to kafka topic: ${topic}, offset: ${offset}`);
   }
 }

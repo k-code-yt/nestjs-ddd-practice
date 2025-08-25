@@ -77,17 +77,17 @@ export class CreatePaymentUseCase {
 
     await this.dataAccess.paymRepo.save(payment);
 
-    const paymCreateEvent = PaymentProcessedEvent.create({
-      ...this.params,
-      paymentId: payment.id.value,
-      amount: payment.paymentAmount?.amount || 0,
-      currency: 'USD',
-      userId: payment.userId.value,
-    });
-    this.eventEmitter.emit(
-      Messaging.PaymentEventsEnum.PaymentProcessed,
-      paymCreateEvent,
-    );
+    // const paymCreateEvent = PaymentProcessedEvent.create({
+    //   ...this.params,
+    //   paymentId: payment.id.value,
+    //   amount: payment.paymentAmount?.amount || 0,
+    //   currency: 'USD',
+    //   userId: payment.userId.value,
+    // });
+    // this.eventEmitter.emit(
+    //   Messaging.PaymentEventsEnum.PaymentProcessed,
+    //   paymCreateEvent,
+    // );
     return payment;
   }
 }

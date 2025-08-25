@@ -5,7 +5,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { PaymentProcessedEvent } from '../../domain/events/payment-processed.event';
 
 @Injectable()
-export class OrderMessagingService implements OnModuleInit {
+export class OrderDomainMessagingService implements OnModuleInit {
   constructor(
     private readonly consumer: MessagingConsumer,
     private readonly eventEmitter: EventEmitter2,
@@ -17,7 +17,7 @@ export class OrderMessagingService implements OnModuleInit {
 
   async start() {
     await this.consumer.start();
-    await this.consumePaymentProcessed();
+    await Promise.all([this.consumePaymentProcessed()]);
   }
 
   async consumePaymentProcessed() {

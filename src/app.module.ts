@@ -14,8 +14,14 @@ const msgDriver = Messaging.MessageDriverTypeEnum.kafka;
 // For SAGA testing
 // // TODO -> must be within paymModule
 const domainInfraModules = [
-  PaymentMessageModule.forRoot({ messagingDriver: msgDriver }),
-  OrderMessageModule.forRoot({ messagingDriver: msgDriver }),
+  PaymentMessageModule.forRoot({
+    messagingDriver: msgDriver,
+    shouldEnableDBStreaming: true,
+  }),
+  OrderMessageModule.forRoot({
+    messagingDriver: msgDriver,
+    shouldEnableDBStreaming: true,
+  }),
 ];
 
 @Module({

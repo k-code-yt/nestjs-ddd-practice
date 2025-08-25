@@ -45,6 +45,10 @@ export class TypeOrmOutboxEventRepository {
     return await this.repository.save(event);
   }
 
+  async addEventMetadata(eventId: string, metadata: any) {
+    await this.repository.update(eventId, { metadata });
+  }
+
   async findByCorrelationId(
     correlationId: string,
   ): Promise<TypeOrmOutboxEventEntity | null> {

@@ -10,17 +10,18 @@ export class MessageModule {
     domain: DomainNameEnum,
     driver: Messaging.MessageDriverTypeEnum,
   ): DynamicModule {
-    const eventsToConsume = Messaging.Config.getEventsToConsume(domain);
-
-    const options: IDomainMessagingOptions = {
+    const domainEventsToConsume = Messaging.Config.getEventsToConsume(domain);
+    const injectionToken = this.getConsumerInjectionToken(domain).value;
+    const domainOptions: IDomainMessagingOptions = {
       domain,
       consumerGroupPrefix: domain,
-      eventsToConsume,
+      injectionToken,
+      eventsToConsume: domainEventsToConsume,
     };
 
     const modules =
       driver === Messaging.MessageDriverTypeEnum.kafka
-        ? [KafkaDomainModule.forDomain(options)]
+        ? [KafkaDomainModule.forDomain(domainOptions)]
         : [];
 
     return {
@@ -28,5 +29,12 @@ export class MessageModule {
       imports: modules,
       exports: modules,
     };
+  }
+
+  static getConsumerInjectionToken(domain: DomainNameEnum) {
+    const domainEventsToConsume =
+      Messaging.Config.getEventsToConsume(domain).join('');
+
+    return { key: domain, value: `${domain}_${domainEventsToConsume}` };
   }
 }

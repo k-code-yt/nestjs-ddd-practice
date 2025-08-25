@@ -22,7 +22,7 @@ export class OutboxPublisherService {
   private readonly logger = new Logger(OutboxPublisherService.name);
   private isProcessing = false;
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  //   @Cron(CronExpression.EVERY_5_SECONDS)
   async publishPendingEvents(): Promise<void> {
     if (this.isProcessing) {
       this.logger.debug('Outbox publishing already in progress, skipping...');

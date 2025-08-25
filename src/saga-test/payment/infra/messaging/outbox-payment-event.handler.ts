@@ -56,5 +56,10 @@ export class PaymentEventHandler {
       data.correlationId,
       sagaId,
     );
+
+    this.eventEmitter.emit(
+      Messaging.InternalEventsEnum.EventCompleted,
+      previousEvent.metadata,
+    );
   }
 }

@@ -8,7 +8,6 @@ import {
 import { Messaging } from '../messaging.config';
 import {
   IDomainMessagingOptions,
-  MessagingProducer,
   MessagingConsumer,
 } from '../messaging.interfaces';
 import { KafkaCoreModule } from './kafka-core.module';
@@ -41,7 +40,7 @@ export class KafkaDomainModule {
 
           const consumerTopics: ConsumerSubscribeTopics = {
             topics,
-            fromBeginning: false,
+            fromBeginning: !!options?.fromBeginning,
           };
 
           const config: ConsumerConfig = {
@@ -65,17 +64,16 @@ export class KafkaDomainModule {
         inject: [KafkaProducer, consumerToken, KAFKA_DOMAIN_MESSAGING_OPTIONS],
       },
       {
-        provide: MessagingConsumer,
+        provide: options.injectionToken,
         useFactory: (c: MessagingConsumer) => c,
         inject: [KafkaConsumer],
       },
     ];
-
     return {
       module: KafkaDomainModule,
       imports: [KafkaCoreModule],
       providers: domainProviders,
-      exports: [MessagingConsumer],
+      exports: [options.injectionToken],
     };
   }
 }

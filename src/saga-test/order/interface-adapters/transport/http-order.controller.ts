@@ -1,6 +1,5 @@
-import { Controller, Logger, OnApplicationBootstrap } from '@nestjs/common';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { Messaging } from '../../../shared/infrastructure/messaging/messaging.config';
+import { Controller, OnApplicationBootstrap } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   CreateOrderUseCase,
   CreateOrderDataAccess,
@@ -21,7 +20,7 @@ export class HTTPOrderTransport implements OnApplicationBootstrap {
     const uc = new CreateOrderUseCase(
       this.createDataAccess,
       {
-        userId: '550e8400-e29b-41d4-a716-446655440001',
+        userId: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
         chargeAmount: 1000,
       },
       this.eventEmitter,
