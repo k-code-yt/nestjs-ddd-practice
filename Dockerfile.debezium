@@ -1,15 +1,10 @@
-# Create a custom Debezium image with auto-configuration
-# Dockerfile.debezium
 FROM debezium/connect:2.7.3.Final
 
-# Copy the connector configuration
 COPY debezium-config.json /opt/kafka/config/
 COPY setup-connector.sh /opt/kafka/bin/
 
-# Make the setup script executable
 USER root
 RUN chmod +x /opt/kafka/bin/setup-connector.sh
 USER kafka
 
-# The setup script will run after Kafka Connect starts
 ENTRYPOINT ["/opt/kafka/bin/setup-connector.sh"]

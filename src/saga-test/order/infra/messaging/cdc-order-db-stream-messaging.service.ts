@@ -66,8 +66,6 @@ export class OrderDBStreamMessagingService implements OnModuleInit {
   private async processOrderCreated(
     msg: OrderDictionary.CreateEvent,
   ): Promise<void> {
-    console.log({ msg });
-
     const orderCreateEvent = OrderCreatedEvent.create({
       orderId: msg.id,
       description: msg.description,

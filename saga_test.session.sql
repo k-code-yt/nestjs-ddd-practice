@@ -87,7 +87,7 @@ INSERT INTO users (
 );
 
 
-select * from users
+
 
 
 ALTER TABLE payments REPLICA IDENTITY FULL;

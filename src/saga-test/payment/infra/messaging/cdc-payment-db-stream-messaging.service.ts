@@ -48,6 +48,19 @@ export class PaymentDBStreamMessagingService implements OnModuleInit {
     );
   }
 
+  // {
+  //   id: "f5d5d53a-b433-4984-87ca-a7ac6098c9e9",
+  //   chargeAmount: "10.00",
+  //   paymentAmount: "10.00",
+  //   status: "active",
+  //   description: null,
+  //   externalTransactionId: null,
+  //   createdAt: 1756189613899489,
+  //   updatedAt: 1756189613899489,
+  //   userId: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+  //   orderId: "fefc8ed5-e0f5-4827-9aa6-abef1c06d3fd",
+  // }
+
   private async processPaymentChange(
     msg: any,
     // msg: PaymentDictionary.ChangeEvent,
@@ -104,11 +117,6 @@ export class PaymentDBStreamMessagingService implements OnModuleInit {
       data,
       data.correlationId,
       sagaId,
-    );
-
-    this.eventEmitter.emit(
-      Messaging.InternalEventsEnum.EventCompleted,
-      previousEvent.metadata,
     );
   }
 

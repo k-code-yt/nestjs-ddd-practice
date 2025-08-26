@@ -31,30 +31,32 @@ curl -X POST http://localhost:8083/connectors \
   -H "Content-Type: application/json" \
   -d '{
     "name": "payments-orders-connector",
-    "config": {
-      "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
-      "database.hostname": "nest-ddd-pratice-postgres-1",
-      "database.port": "5432",
-      "database.user": "user",
-      "database.password": "pass",
-      "database.dbname": "saga_test",
-      "database.server.name": "ecommerce",
-      "table.include.list": "public.payments,public.orders",
-      "plugin.name": "pgoutput",
-      "publication.autocreate.mode": "filtered",
-      "schema.include.list": "public",
-      "topic.prefix": "ecommerce",
-      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-      "key.converter.schemas.enable": "false",
-      "value.converter.schemas.enable": "false",
-      "include.schema.changes": "true",
-      "decimal.handling.mode": "string",
-      "transforms": "route",
-      "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
-      "transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
-      "transforms.route.replacement": "$3"
-    }
+	"config": {
+		"connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+		"database.hostname": "nest-ddd-pratice-postgres-1",
+		"database.port": "5432",
+		"database.user": "user",
+		"database.password": "pass",
+		"database.dbname": "saga_test",
+		"database.server.name": "ecommerce",
+		"table.include.list": "public.payments,public.orders",
+		"plugin.name": "pgoutput",
+		"publication.autocreate.mode": "filtered",
+		"schema.include.list": "public",
+		"topic.prefix": "ecommerce",
+		"key.converter": "org.apache.kafka.connect.json.JsonConverter",
+		"value.converter": "org.apache.kafka.connect.json.JsonConverter",
+		"key.converter.schemas.enable": "false",
+		"value.converter.schemas.enable": "false",
+		"include.schema.changes": "true",
+		"decimal.handling.mode": "string",
+		"snapshot.mode": "never",
+		"skipped.operations": "r",
+		"transforms": "route",
+		"transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+		"transforms.route.regex": "([^.]+)\\.([^.]+)\\.([^.]+)",
+		"transforms.route.replacement": "$3"
+	}
   }'
 
 echo ""
