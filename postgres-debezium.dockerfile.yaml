@@ -1,5 +1,4 @@
 services:
-  # Kafka Infrastructure
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -65,9 +64,6 @@ services:
   # Debezium Connect
   debezium:
     image: debezium/connect:2.7.3.Final
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile.debezium
     ports:
       - '8083:8083'
     depends_on:

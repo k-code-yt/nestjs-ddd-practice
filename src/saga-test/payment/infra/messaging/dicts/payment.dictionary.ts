@@ -10,20 +10,25 @@ export namespace PaymentDictionary {
     };
   }
 
-  export class CreateEvent {
-    id: string;
+  export class ChangePayload {
+    paymentId: string;
+    chargeAmount: string;
+    paymentAmount: string;
+    status: string;
     description: string;
-    amount: string;
     userId: string;
+    orderId: string;
 
-    static create(msg: any): CreateEvent {
-      const createEvent = new CreateEvent();
-      createEvent.id = msg.id;
-      createEvent.description = msg.description;
-      createEvent.amount = msg.amount;
-      createEvent.userId = msg.userId;
-      //   createEvent.status = msg.status;
-      return createEvent;
+    static create(msg: any): ChangePayload {
+      const payload = new ChangePayload();
+      payload.paymentId = msg.id;
+      payload.userId = msg.userId;
+      payload.orderId = msg.orderId;
+      payload.description = msg.description;
+      payload.chargeAmount = msg.chargeAmount;
+      payload.paymentAmount = msg.paymentAmount;
+      payload.status = msg.status;
+      return payload;
     }
   }
 }

@@ -32,4 +32,5 @@ export abstract class MessagingConsumer {
 
   abstract start(): Promise<void>;
   abstract stop(): Promise<void>;
+  abstract commit(metadata: any): Promise<void>;
 }

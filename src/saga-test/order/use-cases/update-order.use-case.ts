@@ -38,17 +38,17 @@ export class UpdateOrderUseCase {
 
     await this.dataAccess.orderRepo.update(order);
 
-    const orderConfirmedEvent = OrderConfirmedEvent.create({
-      orderId: order.id.value,
-      status: order.status,
-      userId: order.userId.value,
-      correlationId: this.params.correlationId,
-    });
+    // const orderConfirmedEvent = OrderConfirmedEvent.create({
+    //   orderId: order.id.value,
+    //   status: order.status,
+    //   userId: order.userId.value,
+    //   correlationId: this.params.correlationId,
+    // });
 
-    this.eventEmitter.emit(
-      Messaging.OrderEventsEnum.OrderConfirmed,
-      orderConfirmedEvent,
-    );
+    // this.eventEmitter.emit(
+    //   Messaging.OrderEventsEnum.OrderConfirmed,
+    //   orderConfirmedEvent,
+    // );
     return order;
   }
 }

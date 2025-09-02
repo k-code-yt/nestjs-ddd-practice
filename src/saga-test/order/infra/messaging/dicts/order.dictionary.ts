@@ -12,16 +12,16 @@ export namespace OrderDictionary {
     };
   }
 
-  export class CreateEvent {
+  export class ChangePayload {
     id: string;
     description: string;
     amount: string;
     userId: string;
     status: OrderStatus;
 
-    static create(msg: any): CreateEvent {
+    static create(msg: any): ChangePayload {
       // TODO -> add validation
-      const createEvent = new CreateEvent();
+      const createEvent = new ChangePayload();
       createEvent.id = msg.id;
       createEvent.description = msg.description;
       createEvent.amount = msg.amount;

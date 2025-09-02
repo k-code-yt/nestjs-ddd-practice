@@ -54,14 +54,12 @@ export class OrderMessageModule {
         useFactory: (
           consumer: MessagingConsumer,
           producer: MessagingProducer,
-          eventEmitter: EventEmitter2,
           sagaRepo: TypeOrmSagaRepository,
           outboxRepo: TypeOrmOutboxEventRepository,
         ) => {
           return new OrderDBStreamMessagingService(
             consumer,
             producer,
-            eventEmitter,
             sagaRepo,
             outboxRepo,
           );
@@ -69,7 +67,6 @@ export class OrderMessageModule {
         inject: [
           dbStreamConsumerToken,
           MessagingProducer,
-          EventEmitter2,
           //TODO -> add abstraction
           TypeOrmSagaRepository,
           TypeOrmOutboxEventRepository,

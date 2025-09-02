@@ -13,6 +13,7 @@ import { v4 as uuid } from 'uuid';
 import { AggregateTypeEnum } from '../../../shared/enums/aggregate-type.enum';
 import { SagaTypeEnum } from '../../../shared/enums/saga-state.enum';
 import { SagaState } from '../../../shared/infrastructure/database/typeorm/entities/typeorm-saga';
+import { OrderConfirmedEvent } from '../../domain/events/order-confirmed.event';
 
 export interface IProcessChangeEvent {
   execute(event: any): Promise<void>;
@@ -23,7 +24,6 @@ export class OrderDBStreamMessagingService implements OnModuleInit {
   constructor(
     private readonly consumer: MessagingConsumer,
     private readonly producer: MessagingProducer,
-    private readonly eventEmitter: EventEmitter2,
     private readonly sagaRepo: TypeOrmSagaRepository,
     private readonly outboxRepo: TypeOrmOutboxEventRepository,
   ) {}
@@ -52,19 +52,19 @@ export class OrderDBStreamMessagingService implements OnModuleInit {
       case 'c':
         await this.processOrderCreated(msg.after);
         break;
+      case 'u':
+        await this.processOrderUpdated(msg.after, msg.before);
+        break;
 
       default:
         break;
     }
-    this.eventEmitter.emit(
-      Messaging.InternalEventsEnum.EventCompleted,
-      metadata,
-    );
+    this.consumer.commit(metadata);
   }
 
   // TODO -> add transaction
   private async processOrderCreated(
-    msg: OrderDictionary.CreateEvent,
+    msg: OrderDictionary.ChangePayload,
   ): Promise<void> {
     const orderCreateEvent = OrderCreatedEvent.create({
       orderId: msg.id,
@@ -102,6 +102,39 @@ export class OrderDBStreamMessagingService implements OnModuleInit {
     await this.outboxRepo.markAsPublished(event.id);
   }
 
-  //   TODO -> add factory for each event type
-  //   private changeEventFactory(): IProcessChangeEvent {}
+  private async processOrderUpdated(
+    after: OrderDictionary.ChangePayload,
+    before: OrderDictionary.ChangePayload,
+  ): Promise<void> {
+    const prevEvent = await this.outboxRepo.findLatestByAggregateId(after.id);
+    const sagaId = prevEvent?.saga?.id;
+    if (!sagaId) {
+      // internal err
+      throw new Error('');
+    }
+
+    const event = OrderConfirmedEvent.create({
+      correlationId: prevEvent.correlationId,
+      orderId: after.id,
+      status: after.status,
+      userId: after.userId,
+      sagaId,
+    });
+
+    await this.sagaRepo.updateSagaState(
+      sagaId,
+      event.eventId,
+      Messaging.OrderEventsEnum.OrderConfirmed,
+      SagaState.Completed,
+      event,
+    );
+
+    // ---PUBLISH FOR NOTIFICATIONS?
+    // 	await this.producer.produce(
+    // 	event.eventData,
+    // 	event.eventType as Messaging.AllDomainEvents,
+    //   );
+
+    //   await this.outboxRepo.markAsPublished(event.id);
+  }
 }

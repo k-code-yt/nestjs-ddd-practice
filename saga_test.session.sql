@@ -92,3 +92,6 @@ INSERT INTO users (
 
 ALTER TABLE payments REPLICA IDENTITY FULL;
 ALTER TABLE orders REPLICA IDENTITY FULL;
+
+select * from choreography_saga_state
+where id = 'e983bd24-1ea4-478b-84b4-afda2fc88ee9'

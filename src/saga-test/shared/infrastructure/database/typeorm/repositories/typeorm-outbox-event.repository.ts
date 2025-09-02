@@ -59,6 +59,27 @@ export class TypeOrmOutboxEventRepository {
     });
   }
 
+  async findLatestByAggregateId(
+    aggregateId: string,
+  ): Promise<TypeOrmOutboxEventEntity | null> {
+    const event = await this.repository
+      .createQueryBuilder('event')
+      .select(['event.id', 'saga.id', 'event.correlationId'])
+      .leftJoin('event.saga', 'saga')
+      .where(
+        `event.id IN (
+			SELECT oe.id
+			FROM outbox_events oe
+			WHERE oe."aggregateId" = '${aggregateId}'		
+			)`,
+      )
+      .orderBy('event.createdAt', 'DESC')
+      .limit(1)
+      .getOne();
+
+    return event;
+  }
+
   async findUnpublishedEvents(
     limit: number = 100,
   ): Promise<TypeOrmOutboxEventEntity[]> {

@@ -152,7 +152,7 @@ export class KafkaConsumer implements OnApplicationShutdown, MessagingConsumer {
   }
 
   @OnEvent(Messaging.InternalEventsEnum.EventCompleted)
-  private async commit(payload: TopicPartitionOffset) {
+  async commit(payload: TopicPartitionOffset) {
     const { offset, partition, topic } = payload;
     await this.consumer.commitOffsets([
       {

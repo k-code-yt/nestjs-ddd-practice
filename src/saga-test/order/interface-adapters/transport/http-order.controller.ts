@@ -13,7 +13,7 @@ export class HTTPOrderTransport implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap() {
-    await this.create();
+    // await this.create();
   }
 
   async create() {

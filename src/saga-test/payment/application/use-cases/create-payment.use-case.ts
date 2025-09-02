@@ -77,6 +77,7 @@ export class CreatePaymentUseCase {
 
     await this.dataAccess.paymRepo.save(payment);
 
+    // ----FOR OUTBOX SAGA----
     // const paymCreateEvent = PaymentProcessedEvent.create({
     //   ...this.params,
     //   paymentId: payment.id.value,

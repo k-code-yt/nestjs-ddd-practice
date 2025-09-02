@@ -60,14 +60,12 @@ export class PaymentMessageModule {
         useFactory: (
           consumer: MessagingConsumer,
           producer: MessagingProducer,
-          eventEmitter: EventEmitter2,
           sagaRepo: TypeOrmSagaRepository,
           outboxRepo: TypeOrmOutboxEventRepository,
         ) => {
           return new PaymentDBStreamMessagingService(
             consumer,
             producer,
-            eventEmitter,
             sagaRepo,
             outboxRepo,
           );
@@ -75,7 +73,6 @@ export class PaymentMessageModule {
         inject: [
           dbStreamConsumerToken,
           MessagingProducer,
-          EventEmitter2,
           //TODO -> add abstraction
           TypeOrmSagaRepository,
           TypeOrmOutboxEventRepository,
