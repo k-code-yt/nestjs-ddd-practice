@@ -18,7 +18,16 @@ export interface IPaymentRepository {
   save(payment: Payment): Promise<void>;
 }
 
-export abstract class UserOrderUOW {
+export abstract class UserOrderUOWForModule {
+  abstract getUserRepository(): IUserRepository;
+  abstract getOrderRepository(): IOrderRepository;
+  abstract commit(): Promise<void>;
+  abstract rollback(): Promise<void>;
+  abstract release(): Promise<void>;
+  abstract init(): Promise<void>;
+}
+
+export abstract class UserOrderDataAccess {
   abstract getUserRepository(): IUserRepository;
   abstract getOrderRepository(): IOrderRepository;
 }

@@ -3,14 +3,14 @@ import { TransferOrderOwnershipUseCase } from '../../application/use-cases/trans
 import { ProxyUnitOfWorkFactory } from '../persistence/uow/proxy-unit-of-work';
 import { UserOrderUnitOfWork } from '../persistence/uow/user-order.uow';
 
-export const UserOrderUseCaseProvider = {
-  provide: TransferOrderOwnershipUseCase,
-  useFactory: async (
-    unitOfWork: IUnitOfWork,
-    proxyFactory: ProxyUnitOfWorkFactory,
-  ) => {
-    const useCase = new TransferOrderOwnershipUseCase(unitOfWork);
-    return proxyFactory.createTransactionalProxy(useCase, UserOrderUnitOfWork);
-  },
-  inject: [UserOrderUnitOfWork.INJECTION_TOKEN, ProxyUnitOfWorkFactory],
-};
+// export const UserOrderUseCaseProvider = {
+//   provide: TransferOrderOwnershipUseCase,
+//   useFactory: async (
+//     unitOfWork: IUnitOfWork,
+//     proxyFactory: ProxyUnitOfWorkFactory,
+//   ) => {
+//     const useCase = new TransferOrderOwnershipUseCase(unitOfWork);
+//     return proxyFactory.createTransactionalProxy(useCase, UserOrderUnitOfWork);
+//   },
+//   inject: [UserOrderUnitOfWork.INJECTION_TOKEN, ProxyUnitOfWorkFactory],
+// };

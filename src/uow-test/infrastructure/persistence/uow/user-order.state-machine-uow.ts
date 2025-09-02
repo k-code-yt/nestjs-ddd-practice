@@ -6,11 +6,10 @@ import { TypeOrmOrderRepository } from '../repos/orm-order.repo';
 import {
   IUserRepository,
   IOrderRepository,
-  UserOrderUOW,
 } from '../../../application/repositories/repos';
 import { Logger } from '@nestjs/common';
 
-export class UserOrderStateMachineUnitOfWork implements UserOrderUOW {
+export class UserOrderStateMachineUnitOfWork {
   private state: TransactionState = TransactionState.IDLE;
   private queryRunner: QueryRunner | null = null;
   private manager: EntityManager | null = null;

@@ -8,41 +8,43 @@ import { PaymentMessageModule } from './saga-test/payment/infra/messaging/paymen
 import { OrderMessageModule } from './saga-test/order/infra/messaging/order-messaging.module';
 import { HTTPOrderTransport } from './saga-test/order/interface-adapters/transport/http-order.controller';
 import { EventOrderTransport } from './saga-test/order/interface-adapters/transport/event-order.controller';
+import { InfrastructureModule } from './uow-test/infrastructure/persistence/database.module';
+import { OrderController } from './uow-test/presenter/order.controller';
 
 const msgDriver = Messaging.MessageDriverTypeEnum.kafka;
 
 // For SAGA testing
 // // TODO -> must be within paymModule
-const domainInfraModules = [
-  PaymentMessageModule.forRoot({
-    messagingDriver: msgDriver,
-    shouldEnableDBStreaming: true,
-  }),
-  OrderMessageModule.forRoot({
-    messagingDriver: msgDriver,
-    shouldEnableDBStreaming: true,
-  }),
-];
+// const domainInfraModules = [
+//   PaymentMessageModule.forRoot({
+//     messagingDriver: msgDriver,
+//     shouldEnableDBStreaming: true,
+//   }),
+//   OrderMessageModule.forRoot({
+//     messagingDriver: msgDriver,
+//     shouldEnableDBStreaming: true,
+//   }),
+// ];
 
-@Module({
-  imports: [
-    EventEmitterModule.forRoot({ global: true }),
-    ScheduleModule.forRoot(),
-    InfraModule.forRoot({
-      messagingDriver: msgDriver,
-    }),
-    ...domainInfraModules,
-  ],
-  //   TODO -> add propper module for these
-  controllers: [EventPaymentTransport, HTTPOrderTransport, EventOrderTransport],
-  providers: [],
-})
-export class AppModule {}
-
-// For UOW testing
 // @Module({
-//   imports: [InfrastructureModule],
-//   controllers: [OrderController],
+//   imports: [
+//     EventEmitterModule.forRoot({ global: true }),
+//     ScheduleModule.forRoot(),
+//     InfraModule.forRoot({
+//       messagingDriver: msgDriver,
+//     }),
+//     ...domainInfraModules,
+//   ],
+//   //   TODO -> add propper module for these
+//   controllers: [EventPaymentTransport, HTTPOrderTransport, EventOrderTransport],
 //   providers: [],
 // })
 // export class AppModule {}
+
+// For UOW testing
+@Module({
+  imports: [InfrastructureModule],
+  controllers: [OrderController],
+  providers: [],
+})
+export class AppModule {}
